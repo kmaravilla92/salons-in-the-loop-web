@@ -28,12 +28,17 @@ class UserRegistrationController extends Controller
     	return view('frontsite.pages.guests.user_registration.step-1');
     }
 
-    public function postCheckUserType(Request $request)
+    public function anyCheckUserType(Request $request)
     {
     	$type = $request->input('user.type');
 
     	$this->validateUserType($type);
         
+        if(isset($request->is_search)){
+            session(['user_type'=>$type]);
+            return redirect($this->generateRedirectLinkForSearch($type));
+        }
+
     	return redirect(
     		route('frontsite.guests.user-registration.step-2', [
     			'type' => $type
@@ -118,5 +123,20 @@ class UserRegistrationController extends Controller
         if(!in_array($type, $this->user_registration_types)){
             dd('Invalid user type');
         }
+    }
+
+    protected function generateRedirectLinkForSearch($type)
+    {
+        switch($type)
+        {
+            case 'client':
+            case 'owner':
+                $link = route('frontsite.user.account', ['type'=>'client', 'extra'=>'#/search']);
+            break;
+            case 'professional';
+                $link = route('frontsite.user.account', ['type'=>'professional', 'extra'=>'#/owner/posted-rentals/search']);
+            break;
+        }
+        return $link;
     }
 }

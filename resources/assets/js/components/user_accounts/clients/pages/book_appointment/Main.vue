@@ -50,7 +50,6 @@
 			}else{
 				$('#main-wrapper').removeClass('book-appoint create-space request-near');
 			}
-			
 		},
 
 		created() {

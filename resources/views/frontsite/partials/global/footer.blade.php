@@ -21,10 +21,26 @@
 			<div class="footer-content">
 				<h3>How can we help you</h3>
 				<ul>
-					<li><a href="#">Salons near me </a></li>
-					<li><a href="#">Send Service Request</a></li>
-					<li><a href="#">Salon booth rental</a></li>
-					<li><a href="#">Salon jobs</a></li>
+					<li>
+						<a href="{{ route('frontsite.user.account', ['type'=>'client', 'extra'=>'#/search']) }}">
+							Professionals Near Me
+						</a>
+					</li>
+					<li>
+						<a href="{{ route('frontsite.guests.user-registration.step-2', ['type'=>'owner']) }}">
+							Send Service Request
+						</a>
+					</li>
+					<li>
+						<a href="{{ route('frontsite.user.account', ['type'=>'professional', 'extra'=>'#/owner/posted-rentals/search']) }}">
+							Salon Booth Rental
+						</a>
+					</li>
+					<li>
+						<a href="{{ route('frontsite.guests.user-registration.step-2', ['type'=>'professional']) }}">
+							Salon Jobs
+						</a>
+					</li>
 				</ul>
 			</div>
 			<div class="footer-content">
@@ -95,6 +111,9 @@
 	<h3>Select a Role</h3>
 	<form action="{{route('frontsite.guests.user-registration.check-user-type')}}" method="POST">
 	{{csrf_field()}}
+	@if(Request::is('home'))
+		<!-- <input type="hidden" name="is_search" value="1"> -->
+	@endif
 		<div class="role-container">
 			<input type="radio" name="user[type]" value="owner" checked>
 			<div class="round-container ease">
@@ -216,5 +235,7 @@
 <script src="{{ asset('js/global.js') }}"></script>
 @stack('css_tail')
 @stack('js_tail')
+<script src="https://www.google.com/recaptcha/api.js?onload=vueRecaptchaInit&render=explicit" async defer>
+</script>
 </body>
 </html>

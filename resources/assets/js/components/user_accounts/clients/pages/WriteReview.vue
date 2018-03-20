@@ -138,7 +138,7 @@
 			</div>
 		</div>
 		<!--POPUPS-->
-		<!-- <div id="thankyou-pop" class="popup-holder review-pop white-popup-block mfp-hide">
+		<div id="thankyou-pop" class="popup-holder review-pop white-popup-block mfp-hide">
 			<button type="button" name="button" class="close">CLOSE</button>
 			<h3>THANK YOU!</h3>
 			<p>Successfully submit your review</p>
@@ -177,7 +177,7 @@
 				<a href="#" class="btn btn-blue">Share on Facebook</a>
 				<a href="#">back to <span>dashboard</span></a>
 			</div>
-		</div> -->
+		</div>
 	</div>
 </template>
 

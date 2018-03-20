@@ -4,30 +4,29 @@
 			<h3>My Posted Rentals Details
 			</h3>
 		</div>
-		<div class="request-details">
-			<Loader
-				v-if="posted_rental.is_loading"
-				text="LOADING SPACE RENTAL DETAILS ..."
-			>	
-			</Loader>
+		<Loader
+			v-if="posted_rental.is_loading"
+		>	
+		</Loader>
+		<div class="request-details" v-if="posted_rental.item != null">
 			<div class="clearfix title-details">
 				<div class="f-left">
-					<p><span>Category </span>{{posted_rental.item.category}}</p>
+					<p><span>Category </span>{{posted_rental.item.category_csv}}</p>
 					<h3>{{posted_rental.item.title}} </h3>
 					<label for=""><span>Posted</span> {{posted_rental.item.created_at}}</label>
 				</div>
 				<div class="f-right">
 					<p>Rent Rate</p>
-					<h5>$ {{posted_rental.item.rate}}</h5>
+					<h5>$ {{posted_rental.item.rate_price}}</h5>
 				</div>
 				<div class="f-right space">
 					<p>Spaces available</p>
 					<div class="clearfix">
-						<h5 class="f-right">2</h5>
+						<h5 class="f-right">{{posted_rental.item.number_of_spaces}}</h5>
 						<div class="delete-space f-left">
-							<a href="#">Delete all space(s)</a>
+							<a href="#" @click.prevent="deleteSpaces('all', posted_rental.item)">Delete all space(s)</a>
 							<span> | </span>
-							<a href="#">Delete 1 space</a>
+							<a href="#" @click.prevent="deleteSpaces(1, posted_rental.item)">Delete 1 space</a>
 						</div>
 					</div>
 
@@ -71,9 +70,9 @@
 				</div>
 				<div class="requirements">
 					<h3>Requirements</h3>
-					<ul v-if="posted_rental.item.service_options_decoded.length > 0">
+					<ul v-if="posted_rental.item.requirements_decoded.length > 0">
 						<li
-							v-for="service_option in posted_rental.item.service_options_decoded"
+							v-for="service_option in posted_rental.item.requirements_decoded"
 							>
 								{{service_option}}
 							</li>
@@ -82,15 +81,14 @@
 						<li>Must be licesed</li> -->
 					</ul>
 					<p
-						v-if="!posted_rental.item.service_options_decoded.length"
+						v-if="!posted_rental.item.requirements_decoded.length"
 					>
 						No service options available.
 					</p>
 				</div>
-				</div>
 
 				<div class="btn-holder write-review cancel">
-					<a href="#" class="btn btn-red-b">CANCEL RENTAL</a>
+					<a href="#" class="btn btn-red-b" @click.prevent="cancelRental">CANCEL RENTAL</a>
 				</div>
 				
 				<div class="pro-details owner-pro-details">
@@ -108,19 +106,22 @@
 					<div class="pro-holder" v-for="posted_rental_application in postedRentalApplications(posted_rental.item)">
 						<div class="img-holder">
 							<div class="img-over">
-								<img src="/frontsite/images/pro1.jpg" alt="">
+								<img 
+									:src="posted_rental_application.professional.profile_pic" 
+									:alt="posted_rental_application.professional.profile_pic"
+								>
 							</div>
 							<a 
 								:href="'/profile-view/'+posted_rental_application.professional_id+'/professional'" 
 								class="btn btn-red-b"
 								target="_blank"
 							>
-									See Profile
+								See Profile
 							</a>
 						</div>
 						<div class="information help-req-owner">
 							<h3>{{posted_rental_application.professional.full_name}}</h3>
-							<p>Square Town, Square City, Colorado - CO, 11010</p>
+							<p>{{posted_rental_application.professional.profile.full_address}}</p>
 							<div class="rating">
 								<i class="fa fa-star" aria-hidden="true"></i>
 								<i class="fa fa-star" aria-hidden="true"></i>
@@ -136,39 +137,40 @@
 								>
 								Accept
 							</a>
+							<a 
+								href="#" 
+								class="btn btn-blue-b"
+								@click.prevent=""
+								v-if="posted_rental_application.application_status == '1'"
+								>
+								Accepted
+							</a>
 						</div>
 						<div class="description">
-							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit .esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat </p>
+							<p>{{posted_rental_application.message_to_salon_owner}} </p>
 						</div>
 					</div>
 
 				</div>
 				<br><br><br>
 				<div class="pagination-holder clearfix">
-					<div class="f-left">
-
-					</div>
-					<div class="pagination f-right">
-						<a href="#">First</a>
-						<a href="#">Previous</a>
-						<a href="#">1</a>
-						<a href="#">2</a>
-						<a href="#">3</a>
-						<a href="#">Next</a>
-						<a href="#">Last</a>
+					<div class="pagination">
+						<pagination 
+							:records="posted_rental_applications.total"
+							:perPage="posted_rental_applications.per_page"
+							:countText="posted_rental_applications.countText"
+							@paginate="setPage">
+						</pagination>
 					</div>
 				</div>
-
-
-
 			</div>
 		</div>
 	</div>
 </template>
 
 <script>
-	import axios from 'axios';
-
+	import axios from 'axios'
+	import {Pagination} from 'vue-pagination-2'
 	export default {
 		data() {
 			return {
@@ -178,7 +180,11 @@
 				},
 				posted_rental_applications: {
 					is_loading: true,
-					items: []
+					items: [],
+					current_page: 1,
+					total: 0,
+					per_page: settings.pagination.per_page,
+					countText: 'Showing {from} to {to} of {count} Posted Rental Applications',
 				}
 			}
 		},
@@ -214,27 +220,42 @@
 			'$route': 'fetchData'
 		},
 
+		components: {
+			Pagination
+		},
+
 		methods: {
 
-			_fetchpostedRental() {
+			setPage(page) {
+				const vm = this;
+				this.posted_rental_applications.current_page = page;
+				this
+					._fetchPostedRentalApplications()
+					.then((response)=>{
+						const data = response.data;
+						vm.posted_rental_applications.items = data.data;
+						vm.posted_rental_applications.total = data.total;
+						vm.posted_rental_applications.is_loading = false;
+					},(error)=>{
+						vm.$toastr('error', 'Something went wrong. Please try again later.', 'Posted Requests List');
+						vm.posted_rental_applications.is_loading = false;
+					});
+			},
+
+			_fetchPostedRental() {
 				return axios
 						.get(
-							apiBaseUrl + 'rest/owners/' + userId + '/space-rentals/' + this.$route.params.id,
-							{
-								params: {
-									recent_only: true
-								}
-							}
+							apiBaseUrl + 'rest/owners/' + userId + '/space-rentals/' + this.$route.params.id
 						);
 			},
 
-			_fetchpostedRentalApplications() {
+			_fetchPostedRentalApplications() {
 				return axios
 						.get(
 							apiBaseUrl + 'rest/owners/' + userId + '/space-rentals/' + this.$route.params.id +'/applications',
 							{
 								params: {
-									recent_only: true
+									page: this.posted_rental_applications.current_page
 								}
 							}
 						);
@@ -243,18 +264,18 @@
 			fetchData() {
 				var vm = this;
 				axios.all([
-					this._fetchpostedRental(),
-					this._fetchpostedRentalApplications()
+					this._fetchPostedRental(),
+					this._fetchPostedRentalApplications()
 				])
 				.then(axios.spread(function(posted_rental, posted_rental_applications) {
 					vm.posted_rental = {
 						is_loading: false,
 						item: posted_rental.data
 					};
-					vm.posted_rental_applications = {
-						is_loading: false,
-						items: posted_rental_applications.data
-					};
+
+					vm.posted_rental_applications.items = posted_rental_applications.data.data;
+					vm.posted_rental_applications.total = posted_rental_applications.data.total;
+					vm.posted_rental_applications.is_loading = false;
 				}))
 				.catch(function(error){
 					alert('Something went wrong. Please refresh your browser.');
@@ -324,6 +345,20 @@
 			releaseFund(posted_rental){
 				posted_rental.payment_released = true;
 				console.log(posted_rental)
+			},
+
+			cancelRental() {
+				alert('FEATURE UNDER DEVELOPMENT');
+			},
+
+			deleteSpaces(qty, posted_rental) {
+				if(qty == 'all'){
+					posted_rental.number_of_spaces = 0
+				}else{
+					posted_rental.number_of_spaces -= 1;
+				}
+
+				// xhr here
 			}
 		}
 	}

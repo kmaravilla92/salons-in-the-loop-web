@@ -5,7 +5,9 @@
 		<div class="wrapper">
 			<div class="clearfix">
 				<div class="f-right">
-					<a href="{{ route('frontsite.user.account', ['user_type' => 'client']) }}#dashboard" class="btn btn-white-b">Back to <span style="color:#aad1ff;">Clients  Dashboard</span></a>
+					@if($is_self_viewing)
+						<a href="{{ route('frontsite.user.account', ['user_type' => 'client']) }}#dashboard" class="btn btn-white-b">Back to <span style="color:#aad1ff;">Clients  Dashboard</span></a>
+					@endif
 				</div>
 			</div>
 		</div>

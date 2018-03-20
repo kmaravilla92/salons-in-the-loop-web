@@ -73,7 +73,7 @@ Route::namespace('Guests')->group(function () {
 
 	Route::prefix('user-registration')->group(function () {
 		Route::get('step-1', 'UserRegistrationController@getStep1')->name('frontsite.guests.user-registration.step-1'); // TD
-		Route::post('check-user-type', 'UserRegistrationController@postCheckUserType')->name('frontsite.guests.user-registration.check-user-type'); // TD
+		Route::any('check-user-type', 'UserRegistrationController@anyCheckUserType')->name('frontsite.guests.user-registration.check-user-type'); // TD
 		Route::get('step-2/{type}', 'UserRegistrationController@getStep2')->name('frontsite.guests.user-registration.step-2'); // TD
 		Route::post('register', 'UserRegistrationController@postRegister')->name('frontsite.guests.user-registration.register'); // TD
 		Route::get('step-3/{type}', 'UserRegistrationController@getStep3')->name('frontsite.guests.user-registration.step-3'); // TD
@@ -95,34 +95,7 @@ Route::namespace('Guests')->group(function () {
 	});
 });
 
-Route::get('account/{user_type}', function ($user_type) {
-	$main_wrapper_class = 'inner dashboard dashboard-';
-	$main_container_css = 'salon-pro dashboard dashboard-';
-	switch($user_type){
-		case 'client':
-			$main_wrapper_class .= 'owner';
-			$main_container_css .= 'client';
-		break;
-		case 'owner':
-			$main_wrapper_class .= 'owner';
-			$main_container_css .= 'owner';
-		break;
-		case 'professional':
-			$main_wrapper_class .= 'pro';
-			$main_container_css .= 'pro';
-		break;
-	}
-	$is_spa = true;
-    return view(
-    	'frontsite.spa.master', 
-    	compact(
-    		'is_spa', 
-    		'user_type', 
-    		'main_wrapper_class',
-    		'main_container_css'
-    	)
-    );
-})->name('frontsite.user.account');
+Route::get('account/{user_type}{extra?}', 'AccountController')->name('frontsite.user.account');
 
 Route::get('admin', function(){
 	return view('backsite.master');

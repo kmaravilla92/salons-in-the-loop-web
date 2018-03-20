@@ -1,6 +1,7 @@
 @extends('frontsite.master')
 
 @section('spa_content')
+	<input type="hidden" name="user_type" id="user_type" value="{{$user_type}}">
 	<div v-if="main.show">
 		<section id="main-wrapper" class="{{$main_wrapper_class}}" style="padding-bottom: 479px;">
 			<div class="banner-container clearfix client-bg-dark banner-search" style="display: none;">
@@ -35,7 +36,7 @@
 			<div class="banner-container clearfix pro-bg cprs" style="display: none;">
 				<div class="wrapper">
 					<p class="f-left">Client Request Details</p>
-					<a href="#" class="f-right">Back to <span style="color:#ffb1b1;">Search Listing</span></a>
+					<a href="/account/professional#/dashboard" class="f-right">Back to <span style="color:#ffb1b1;">Dashboard</span></a>
 				</div>
 			</div>
 			
@@ -44,7 +45,7 @@
 					<h3>Salon {{ucfirst($user_type)}} Dashboard</h3>
 				</div>
 				<div class="title-holder" v-if="custom_title">
-					<h3>@{{custom_title}}</h3>
+					<h3 v-html="custom_title"></h3>
 				</div>
 				<Sidebar
 					:user="user"

@@ -14,7 +14,7 @@
 				<li v-for="posted_rental in posted_rentals.items">
 					<div class="clearfix title-details">
 						<div class="f-left">
-							<p><span>Category </span>{{posted_rental.category}}</p>
+							<p><span>Category </span>{{posted_rental.category_csv}}</p>
 							<h3>{{posted_rental.title}} </h3>
 							<label for=""><span>Posted</span> {{posted_rental.created_at}}</label>
 						</div>
@@ -25,7 +25,7 @@
 						</div>
 						<div class="f-right space">
 							<p>Space Available </p>
-							<h5>2/2</h5>
+							<h5>{{posted_rental.number_of_occupied_spaces}}/{{posted_rental.number_of_spaces}}</h5>
 						</div>
 					</div>
 					<div class="content">
@@ -77,18 +77,14 @@
 					</div>
 				</li>
 			</ul>
-			<div class="pagination-holder clearfix" v-if="posted_rentals.items.length > 10">
-				<div class="f-left">
-					<p>Showing 8 out of 8 of My Posted Rentals</p>
-				</div>
-				<div class="pagination f-right">
-					<a href="#">First</a>
-					<a href="#">Previous</a>
-					<a href="#">1</a>
-					<a href="#">2</a>
-					<a href="#">3</a>
-					<a href="#">Next</a>
-					<a href="#">Last</a>
+			<div class="pagination-holder clearfix">
+				<div class="pagination">
+					<pagination 
+						:records="posted_rentals.total"
+						:perPage="posted_rentals.per_page"
+						:countText="posted_rentals.countText"
+						@paginate="setPage">
+					</pagination>
 				</div>
 			</div>
 		</div>
@@ -96,14 +92,18 @@
 </template>
 
 <script>
-	import axios from 'axios';
-
+	import axios from 'axios'
+	import {Pagination} from 'vue-pagination-2'
 	export default {
 		data() {
 			return {
 				posted_rentals: {
 					is_loading: true,
-					items: []
+					items: [],
+					current_page: 1,
+					total: 0,
+					per_page: settings.pagination.per_page,
+					countText: 'Showing {from} to {to} of {count} My Posted Rentals',
 				},
 			}
 		},
@@ -120,11 +120,26 @@
 			'$route' : 'fetchData'
 		},
 
+		components: {
+			Pagination
+		},
+
 		methods: {
+			
+			setPage(page) {
+				this.posted_rentals.current_page = page;
+				this.fetchData();
+			},
+
 			_fetchPostedRentals() {
 				return axios
 						.get(
-							apiBaseUrl + 'rest/owners/' + userId + '/space-rentals'
+							apiBaseUrl + 'rest/owners/' + userId + '/space-rentals',
+							{
+								params: {
+									page: this.posted_rentals.current_page
+								}
+							}
 						);
 			},
 
@@ -134,13 +149,13 @@
 					this._fetchPostedRentals()
 				])
 				.then(axios.spread(function(posted_rentals) {
-					vm.posted_rentals = {
-						is_loading: false,
-						items: posted_rentals.data
-					};
+					const data = posted_rentals.data;
+					vm.posted_rentals.items = data.data;
+					vm.posted_rentals.total = data.total;
+					vm.posted_rentals.is_loading = false;
 				}))
 				.catch(function(error){
-					alert('Something went wrong. Please refresh your browser.');
+					vm.$toastr('error', 'Something went wrong. Please try again later.', 'Posted Requests List');
 					vm.posted_rentals.is_loading = false;
 				});
 			}

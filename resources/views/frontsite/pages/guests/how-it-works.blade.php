@@ -9,7 +9,7 @@
 		</div>
 		<div class="wrapper">
 			<div class="content-section">
-					<div class="title-how">
+					<div class="title-how" id="salon-owners">
 						<div class="ico-holder">
 							<img src="/frontsite/images/how-ico1.png" alt="">
 						</div>
@@ -56,7 +56,7 @@
 					</div>
 					<div class="skew">
 						<div class="unskew">
-							<div class="title-how">
+							<div class="title-how" id="professionals">
 								<div class="ico-holder">
 									<img src="/frontsite/images/how-ico3.png" alt="">
 								</div>
@@ -104,7 +104,7 @@
 								</div>
 						</div>
 					</div>
-					<div class="title-how">
+					<div class="title-how" id="clients">
 						<div class="ico-holder">
 							<img src="/frontsite/images/how-ico1.png" alt="">
 						</div>
@@ -157,3 +157,22 @@ Refunds will be issued for professional no shows and other service breaches by t
 		</div>
 	</section>
 @endsection
+
+@push('js_tail')
+	<script>
+		$(function() {
+			var section = '{{$section}}',
+				timeoutId;
+
+				if(section != 'none'){
+					timeoutId = setTimeout(function()
+					{
+						$('body,html').animate({
+							scrollTop: $('#' + section).offset().top
+						}, 800);
+						clearTimeout(timeoutId);
+					}, 400);
+				}
+		});
+	</script>
+@endpush

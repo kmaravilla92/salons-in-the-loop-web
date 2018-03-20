@@ -4,7 +4,6 @@
 			<h3>Card Information</h3>
 		</div>
 		<div class="form-holder">
-
 			<ul>
 				<li>
 					<label for="">Name On Card</label>
@@ -18,7 +17,7 @@
 					<label for="" class="f-left">Expiration Date</label>
 					<label for="" class="f-right">Security Code <i class="fa fa-question-circle" aria-hidden="true" style="color:#4f81bb;"></i></label>
 					<div class="clearfix"></div>
-					<input type="text" placeholder="Month" class="f-left width-33 expi-inp" v-model="payment_info.card_info.cc_name">
+					<input type="text" placeholder="Month" class="f-left width-33 expi-inp" v-model="payment_info.card_info.cc_exp_month">
 					<input type="text" placeholder="Year" class="f-left width-33 expi-inp year" v-model="payment_info.card_info.cc_exp_year">
 					<input type="text" placeholder="Code" class="f-left width-33 code" v-model="payment_info.card_info.cc_sec_code">
 				</li>
@@ -26,9 +25,14 @@
 					<label for="">Credit Card Type</label>
 					<input type="text" placeholder="" v-model="payment_info.card_info.cc_type">
 				</li>
-
 			</ul>
-			<input type="submit" name="" value="SAVE" class="btn btn-blue btn-slim">
+			<input 
+				type="submit" 
+				name="" 
+				value="SAVE" 
+				class="btn btn-blue btn-slim"
+				@click.prevent="savePaymentInfo(payment_info)"
+			>
 		</div>
 		<br><br>
 		<div class="inner-title">
@@ -73,7 +77,7 @@
 </template>
 
 <script>
-	import axios from 'axios'
+	import axios from 'axios';
 	export default {
 		data(){
 			return {
@@ -88,10 +92,10 @@
 					},
 					billing_address: {
 						billing_address: '',
-				        billing_city: '',
-				        billing_postal: '',
-				        billing_state: '',
-				        billing_country: '',
+		        billing_city: '',
+		        billing_postal: '',
+		        billing_state: '',
+		        billing_country: '',
 					}
 				}
 			}

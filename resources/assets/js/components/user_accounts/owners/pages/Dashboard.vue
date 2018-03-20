@@ -35,7 +35,7 @@
 				</li>
 				
 				<li>
-					<a href="#">
+					<router-link :to="{name:'owner.posted-rentals.create'}">
 						<div class="noti-count ease">
 							<p>16</p>
 						</div>
@@ -44,7 +44,7 @@
 						</div>
 
 						<p class="ease">Post a Space <br> For Rent</p>
-					</a>
+					</router-link>
 				</li>
 
 			</ul>
@@ -65,14 +65,14 @@
 						v-for="posted_rental in posted_rentals.items"
 					>
 						<div class="content-holder">
-							<h5><span>Category</span> Barber</h5>
+							<h5><span>Category</span> {{posted_rental.category_csv}}</h5>
 							<a href="#">{{ posted_rental.title }}</a>
 
-							<p><span>Posted</span> Today10/26/20177</p>
+							<p><span>Posted</span> {{posted_rental.created_at}}</p>
 
 						</div>
 						<div class="content-holder renters">
-							<p><span>50 </span> Renters Applied</p>
+							<p><span>{{posted_rental.renters_count}} </span> Renters Applied</p>
 						</div>
 						<div class="btn-holder">
 							<router-link 
@@ -102,7 +102,7 @@
 					>
 
 						<div class="content-holder">
-							<h5><span>professional Types </span> {{posted_help_request.category}}</h5>
+							<h5><span>professional Types </span> {{posted_help_request.category_csv}}</h5>
 							<a href="#">{{ posted_help_request.title }}</a>
 
 							<!-- <p><span>Posted</span> Today10/26/20177</p> -->
@@ -195,11 +195,11 @@
 				.then(axios.spread(function(posted_rentals, posted_help_requests) {
 					vm.posted_rentals = {
 						is_loading: false,
-						items: posted_rentals.data
+						items: posted_rentals.data.data
 					};
 					vm.posted_help_requests = {
 						is_loading: false,
-						items: posted_help_requests.data
+						items: posted_help_requests.data.data
 					};
 
 					console.log(posted_help_requests)

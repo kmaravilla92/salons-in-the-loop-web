@@ -1,63 +1,11 @@
 <template>
-	<section id="main-wrapper" class="inner pro-calendar client-bg edit-profile book-rental calendar-edit  name-my create-space request-near">
-		<div class="title-holder clearfix">
-			<div class="wrapper">
-				<h3>Waiting List Sign In</h3>
-			</div>
-		</div>
-		<div class="wrapper">
-			<div class="calendar-container">
-				<div class="title-container clearfix">
-					<p>Salons in the loop is here to help you connect with the top professionals in the industry. Enter your  information now to <br> get started! Feel free to <a href="/contact-us">contact us</a> if you have any questions.</p>
-				</div>
-				<div class="form-holder clearfix">
-					<ul>
-
-						<li class="full-width f-left">
-							<label for="">Title</label>
-							<input type="text" name="" v-model="waiting_list.title">
-						</li>
-						<li class="full-width f-left">
-							<label for="">Message</label>
-							<textarea name="name" rows="8" cols="80" v-model="waiting_list.message">
-								
-							</textarea>
-						</li>
-
-						<li class="half-width f-left">
-							<label for="">Phone Number</label>
-							<input type="text" name="" class="" v-model="waiting_list.phone_number">
-						</li>
-
-					</ul>
-				</div>
-				<div class="form-holder footer-check">
-					<div class="check">
-						<p><span style="color:#a52c2c;">Note:</span> You Will need to contact the service provider to cancel this booking</p>
-					</div>
-					<div class="check">
-
-						<div class="checkbox">
-							<input type="checkbox" name="v1" value="">
-							<span></span>
-						</div>
-						<p>By checking this, you indicate that you have read and agree to the <a href="#">Terms of Use</a> and <a href="#">Privacy Policy</a>.</p>
-
-					</div>
-
-					<div class="captcha-holder">
-						<img src="/frontsite/images/captcha.png" alt="">
-					</div>
-
-				</div>
-			<div class="btn-holder">
-				<input type="submit" name="" value="Clear All Info" class="btn btn-red" @click.prevent="clearData(waiting_list)">
-				<input type="submit" name="" value="Continue" class="btn btn-blue" @click.prevent="sendData(waiting_list)">
-			</div>
-
-			</div>
-		</div>
-	</section>
+	<router-view
+		:waiting_list="waiting_list"
+		@goToNextStep="goToNextStep"
+		@clearData="clearData"
+		@sendData="sendData"
+	>
+	</router-view>
 </template>
 
 <script>
@@ -70,29 +18,39 @@
 					title: '',
 					message: '',
 					phone_number: '',
-					professional_id: ''
+					professional_id: 0,
+					selected_schedules: []
 				}
 			}
 		},
 
 		mounted() {
-			$('#main-wrapper').addClass('inner pro-calendar client-bg edit-profile book-rental calendar-edit  name-my create-space request-near');
 			this.$parent.sidebar.show = false;
 			this.$parent.in_user_dashboard = false;
-			$('.client-bg-dark.banner-search').hide();
+			this.$root.main.show = false;
+			// $('#main-wrapper').addClass('inner pro-calendar client-bg edit-profile book-rental calendar-edit  name-my create-space request-near');
+			// this.$parent.sidebar.show = false;
+			// this.$parent.in_user_dashboard = false;
+			// $('.client-bg-dark.banner-search').hide();
 			this.setProfessionalId();
 		},
 
 		destroyed() {
-			$('#main-wrapper').removeClass('inner pro-calendar client-bg edit-profile book-rental calendar-edit  name-my create-space request-near');
 			this.$parent.sidebar.show = true;
 			this.$parent.in_user_dashboard = true;
+			this.$root.main.show = true;
+			// $('#main-wrapper').removeClass('inner pro-calendar client-bg edit-profile book-rental calendar-edit  name-my create-space request-near');
+			// this.$parent.sidebar.show = true;
+			// this.$parent.in_user_dashboard = true;
 		},
 		
 		created() {
 			this.$parent.sidebar.show = false;
 			this.$parent.in_user_dashboard = false;
-			$('.client-bg-dark.banner-search').hide();
+			this.$root.main.show = false;
+			// this.$parent.sidebar.show = false;
+			// this.$parent.in_user_dashboard = false;
+			// $('.client-bg-dark.banner-search').hide();
 			this.setProfessionalId();
 		},
 
@@ -101,14 +59,19 @@
 		},
 
 		methods: {
+
+			goToNextStep(route) {
+				this.$router.push(route);
+			},
+
 			setProfessionalId() {
 				this.waiting_list.professional_id = this.$route.params.pro_id;
 			},
 
-			clearData(waiting_list) {
-				waiting_list.title = '';
-				waiting_list.message = '';
-				waiting_list.phone_number = '';
+			clearData() {
+				this.waiting_list.title = '';
+				this.waiting_list.message = '';
+				this.waiting_list.phone_number = '';
 			},
 
 			sendData(waiting_list) {

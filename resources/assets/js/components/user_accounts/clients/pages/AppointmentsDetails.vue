@@ -4,7 +4,7 @@
 			<h3>My Booked Details</h3>
 
 		</div>
-		<h2>BOOKING DETAILS <span class="f-right">June 29, 2017</span></h2>
+		<h2>BOOKING DETAILS <span class="f-right"><!-- June 29, 2017 -->{{appointment.created_at}}</span></h2>
 		<div class="request-details">
 			<div class="services-holder">
 				<ul>
@@ -137,7 +137,6 @@
 </template>
 
 <script>
-	import axios from 'axios';
 	export default {
 		data() {
 			return {

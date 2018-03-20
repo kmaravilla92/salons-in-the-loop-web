@@ -10,96 +10,26 @@
 				<a href="#" class="f-right">back to <span>Jessica’s Profile</span></a>
 			</div>
 			<div class="calendar-holder">
-				<div id="calendar">
-					<!-- <full-calendar :event-sources="eventSources"></full-calendar> -->
+				<Loader
+					v-if="is_loading"
+				>
+				</Loader>
+				<div id='calendar' v-if="!is_loading">
+					<full-calendar 
+						:events="events" 
+						locale="en"
+						@dayClick="dayClick"
+						@changeMonth="changeMonth "
+					>
+					</full-calendar>
 				</div>
 			</div>
 		</div>
 
 	</div>
 </template>
-<!--<style>
-    @import '~fullcalendar/dist/fullcalendar.css';
-</style>-->
+
 <script>
-	function initCalendar() {
-		// jQuery('#calendar').fullCalendar();
-		// $(document).ready(function(){
-		// 	$('.noti-holder').click(function(){
-		// 		$('.notif-popup').slideToggle( "slow", function() {});
-		// 	});
-			
-		// 	$('#calendar').fullCalendar({
-		// 		header: {
-		// 			left: 'title',
-		// 			right: 'prev,today,next'
-
-		// 		},
-		// 		defaultDate: '2017-10-12',
-		// 		editable: true,
-		// 		eventLimit: true, // allow "more" link when too many events
-		// 		events: [
-		// 			{
-		// 				title: 'All Day Event',
-		// 				start: '2017-10-01'
-		// 			},
-		// 			{
-		// 				title: 'Long Event',
-		// 				start: '2017-10-07',
-		// 				end: '2017-10-10'
-		// 			},
-		// 			{
-		// 				id: 999,
-		// 				title: 'Repeating Event',
-		// 				start: '2017-10-09T16:00:00'
-		// 			},
-		// 			{
-		// 				id: 999,
-		// 				title: 'Repeating Event',
-		// 				start: '2017-10-16T16:00:00'
-		// 			},
-		// 			{
-		// 				title: 'Conference',
-		// 				start: '2017-10-11',
-		// 				end: '2017-10-13'
-		// 			},
-		// 			{
-		// 				title: 'Meeting',
-		// 				start: '2017-10-12T10:30:00',
-		// 				end: '2017-10-12T12:30:00'
-		// 			},
-		// 			{
-		// 				title: 'Lunch',
-		// 				start: '2017-10-12T12:00:00'
-		// 			},
-		// 			{
-		// 				title: 'Meeting',
-		// 				start: '2017-10-12T14:30:00'
-		// 			},
-		// 			{
-		// 				title: 'Happy Hour',
-		// 				start: '2017-10-12T17:30:00'
-		// 			},
-		// 			{
-		// 				title: 'Dinner',
-		// 				start: '2017-10-12T20:00:00'
-		// 			},
-		// 			{
-		// 				title: 'Birthday Party',
-		// 				start: '2017-10-13T07:00:00'
-		// 			},
-		// 			{
-		// 				title: 'Click for Google',
-		// 				url: 'http://google.com/',
-		// 				start: '2017-10-28'
-		// 			}
-		// 		]
-		// 	});
-		// });
-	}
-
-	// import fullCalendar from 'vue-fullcalendar';
-
 	var eventSources = [
 	    {
 	      title : 'Sunny Out of Office',
@@ -107,26 +37,25 @@
 	      end : '2017-07-27'
 	    }
 	];
-
+	import fullCalendar from 'vue-fullcalendar'
 	export default {
 		props: ['pro_id'],
 
 		data() {
 			return {
+				is_loading: false,
 				eventSources: eventSources
 			};
 		},
 
 		mounted() {
-			initCalendar();
 		},
 
 		created() {
-			initCalendar()
 		},
 
-		components : {
-			// 'full-calendar': require('vue-full-calendar')	
+		components: {
+			fullCalendar
 		},
 
 		methods: {
@@ -137,6 +66,12 @@
 						pro_id: this.pro_id
 					}
 				});
+			},
+			dayClick() {
+				this.goToStep3();
+			},
+			changeMonth () {
+
 			}
 		}
 	}

@@ -25,7 +25,7 @@
 				<div class="request-details">
 					<div class="clearfix title-details">
 						<div class="f-left">
-							<p><span>User Types </span>{{ posted_request.professional_types }}</p>
+							<p><span>User Types </span>{{ posted_request.professional_types_csv }}</p>
 							<h3>{{ posted_request.title }} </h3>
 							<label for=""><span>Posted</span> {{posted_request.created_at }}</label>
 						</div>
@@ -66,49 +66,59 @@
 								</li>
 								<li>
 									<h5>Address</h5>
-									<p><i class="fa fa-map-marker" aria-hidden="true"></i>  Complete address goes here, Los Angeles, CA</p>
+									<p><i class="fa fa-map-marker" aria-hidden="true"></i>  {{ posted_request.full_address }}</p>
 								</li>
 							</ul>
 						</div>
-							<div class="requirements">
-								<h3>Requirements</h3>
-								<ul>
-									<li>Must perform service in salon</li>
-									<li>No partial payment fir this listing</li>
-									<li>Must be licesed</li>
-								</ul>
-							</div>
+						<div class="requirements">
+							<h3>Requirements</h3>
+							<ul v-if="posted_request.service_options_decoded">
+								<li
+									v-for="service_option in posted_request.service_options_decoded"
+									>
+										{{service_option}}
+									</li>
+								<!-- <li>Must perform service in salon</li>
+								<li>No partial payment fir this listing</li>
+								<li>Must be licesed</li> -->
+							</ul>
+							<p
+								v-if="!posted_request.service_options_decoded.length"
+							>
+								No service options available.
+							</p>
 						</div>
-						<div class="img-listing">
-							<div class="img-title">
-								<h3>My Current Look</h3>
-							</div>
-
-							<a 
-								v-for="current_look_photo in posted_request.current_look_photos"
-								:href="current_look_photo" 
-								class="img-holder">
-								<img 
-									:src="current_look_photo" 
-									:alt="current_look_photo">
-							</a>
-
-
+					</div>
+					<div class="img-listing">
+						<div class="img-title">
+							<h3>My Current Look</h3>
 						</div>
-						<div class="img-listing">
-							<div class="img-title">
-								<h3>My Desired Look</h3>
-							</div>
 
-							<a 
-								v-for="current_look_photo in posted_request.desired_look_photos"
-								:href="current_look_photo" 
-								class="img-holder">
-								<img 
-									:src="current_look_photo" 
-									:alt="current_look_photo">
-							</a>
+						<a 
+							v-for="current_look_photo in posted_request.current_look_photos"
+							:href="current_look_photo" 
+							class="img-holder">
+							<img 
+								:src="current_look_photo.path" 
+								:alt="current_look_photo.path">
+						</a>
+
+
+					</div>
+					<div class="img-listing">
+						<div class="img-title">
+							<h3>My Desired Look</h3>
 						</div>
+
+						<a 
+							v-for="current_look_photo in posted_request.desired_look_photos"
+							:href="current_look_photo" 
+							class="img-holder">
+							<img 
+								:src="current_look_photo.path" 
+								:alt="current_look_photo.path">
+						</a>
+					</div>
 				</div>
 				<div 
 					class="btn-holder"
@@ -119,7 +129,7 @@
 						@click.prevent="applyForThisService(userId, posted_request.id)"
 						v-if="!proHasApplied"
 					>
-						APPLY FOR THIS SERVICE
+						APPLY FOR THIS JOB
 					</a>
 					<a
 						class="btn btn-blue"
@@ -173,7 +183,6 @@
 
 		computed: {
 			proHasApplied() {
-				console.log('posted_request_application', this.posted_request_application);
 				return this.posted_request_application != null;
 			}
 		},
@@ -228,20 +237,19 @@
 							}
 						)
 						.then(function(response) {
-							console.log(response.data);
 							if(response.data.success){
 								vm.posted_request_application = response.data.application;
-								alert('Application successfully sent.');
+								vm.$toastr('success', 'You have successfully applied for this job, we will notify you if you are accepted. We\'ll keep you in the loop.', 'Job Application');
 							}
 						}, function(error) {
-							console.log('error', error);
-							alert('Something went wrong. Please try again later.');
+							vm.$toastr('success', 'Something went wrong. Please try again later.', 'Job Application');
 						});
 			},
 			
 			cancelApplication(application) {
 				if(application==null){
 					alert('Unable to cancel right now. Please try again later.');
+					vm.$toastr('error', 'Unable to cancel right now. Please try again later.', 'Job Application Cancellation');
 					return false;
 				}
 				var conf = confirm('Are you sure you want to do this ?');
@@ -253,14 +261,12 @@
 							apiBaseUrl + 'rest/professionals/'+application.professional_id+'/client/posted-requests/applications/' + application.id
 						)
 						.then(function(response) {
-							console.log(response.data);
 							if(response.data.success){
 								vm.posted_request_application = null;
-								alert('Application successfully cancelled.');
+								vm.$toastr('success', 'Application successfully cancelled', 'Job Application Cancellation');
 							}
 						}, function(error) {
-							console.log('error', error);
-							alert('Something went wrong. Please try again later.');
+							vm.$toastr('error', 'Something went wrong. Please try again later.', 'Job Application Cancellation');
 						});
 			}
 		}

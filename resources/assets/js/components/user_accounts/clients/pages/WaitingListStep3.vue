@@ -1,5 +1,5 @@
 <template>
-	<section id="main-wrapper" class="inner pro-calendar client-bg edit-profile book-rental calendar-edit  name-my accept-reject ">
+	<section id="main-wrapper" class="inner pro-calendar client-bg edit-profile book-rental calendar-edit  name-my accept-reject " style="padding-bottom: 479px;">
 		<div class="title-holder clearfix">
 			<div class="wrapper">
 				<h3>Waiting List Sign In</h3>

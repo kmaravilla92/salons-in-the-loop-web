@@ -64,7 +64,7 @@ class SocialAuthController extends Controller
         }
         
         if($user_type == 'unidentified'){
-            if(!$sentinel_user)
+            if(!$sentinel_user){
                 Session::flash('toastr', [
                     'error' => 'Social account not found. Please register first.'
                 ]);
@@ -77,7 +77,7 @@ class SocialAuthController extends Controller
         if($sentinel_user){
             $roles_to_check = ['client','professional','owner'];
             foreach($roles_to_check as $role_to_check){
-                if($sentinel_user->hasAccess($role_to_check) && $role_to_check != $user_type){
+                if($sentinel_user->hasAccess($role_to_check) && $role_to_check != $user_type && $user_type !='unidentified'){
                     Session::flash('toastr', [
                         'error' => 'You social account has already been registered as a '. (ucfirst($role_to_check)).'. Registering as a '.ucfirst($user_type).' is prohibited.'
                     ]);
@@ -85,20 +85,24 @@ class SocialAuthController extends Controller
                         route('frontsite.guests.home')
                     );
                 }else{
-                    Sentinel::login($sentinel_user);
-                    session([
-                        'sitl' => [
-                            'user' => [
-                                'id' => $sentinel_user->id,
-                                'type' => $user_type
-                            ]
-                        ],
-                    ]);
-                    return redirect(
-                        route('frontsite.user.account', [
-                            'user_type' => $user_type
-                        ]).'#dashboard'
-                    );      
+                    if($sentinel_user->hasAccess($role_to_check)){
+                        Sentinel::login($sentinel_user);
+                        $api_user_request = $this->http_client->get('rest/users/'.$sentinel_user->id);
+                        $api_user = json_decode($api_user_request->getBody()->getContents(), true);
+                        session([
+                            'sitl' => [
+                                'user' => array_merge([
+                                    'id' => $sentinel_user->id,
+                                    'type' => $role_to_check
+                                ],$api_user)
+                            ],
+                        ]);
+                        return redirect(
+                            route('frontsite.user.account', [
+                                'user_type' => $role_to_check
+                            ]).'#dashboard'
+                        );
+                    }      
                 }
             }
         }

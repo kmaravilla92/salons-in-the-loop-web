@@ -1,25 +1,62 @@
 <template>
-	<div class="loading">
-		<!-- {{text}}
-		<br>
-		<br>
-		<br> -->
-		<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
+	<div class="spinner-holder">
+		<spinner
+		  :status="status"
+		  :color="color"
+		  :size="size"
+		  :depth="depth"
+		  :rotation="rotation"
+		  :speed="speed"></spinner>
 	</div>
 </template>
 
 <script>
+	import Spinner from 'vue-spinner-component/src/Spinner.vue'
 	export default {
-		// data() {
-		// 	return {
-		// 		text: this.text || 'LOADING ...'
-		// 	}
-		// }
+		props: {
+
+		    status: {
+		        type: Boolean,
+		        default: true
+		    },
+
+		    rotation: {
+		        type: Boolean,
+		        default: true
+		    },
+
+		    size: {
+		        type: Number,
+		        default: 60
+		    },
+
+		    depth: {
+		        type: Number,
+		        default: 3
+		    },
+
+		    speed: {
+		        type: Number,
+		        default: 1.0
+		    },
+
+		    color: {
+		        type: String,
+		        default: '#cb4e4e'
+		    }
+
+		},
+
+		components: {
+			Spinner
+		}
 	}
 </script>
 
-<style>
-	.loading {
-		text-align: center;
+<style lang="scss">
+	.spinner-holder {
+		.sl-spinner {
+			margin: 0 auto;
+		}
 	}
 </style>

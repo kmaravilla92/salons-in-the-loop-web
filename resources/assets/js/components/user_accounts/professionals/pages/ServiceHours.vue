@@ -64,6 +64,8 @@
 			</ul>
 		</div>
 		<div class="btn-holder" v-if="!is_loading">
+			<p><span>Note:</span> Save changes before you view!</p>
+			<br>
 			<a 
 				href="#"
 				class="btn btn-blue"
@@ -139,9 +141,11 @@
 				var vm = this;
 					axios
 						.get(apiBaseUrl + 'rest/users/'+userId+'/service-hours/'+userId)
-						.then(function(response){
+						.then((response)=>{
 							vm.service_hour = response.data;
 							vm.is_loading = false;
+						},(error)=>{
+							vm.$toastr('error', 'Something went wrong. Please try again later.', 'Services Hours List');
 						});
 			},
 
@@ -151,10 +155,12 @@
 						.put(apiBaseUrl + 'rest/users/'+userId+'/service-hours/'+userId, {
 							service_hour: vm.service_hour
 						})
-						.then(function(response){
+						.then((response)=>{
 							if(response.data.success){
-								alert('Services successfully saved!');
+								vm.$toastr('success', 'Service Hours successfully updated.', 'Service Hours Update');
 							}
+						},(error)=>{
+							vm.$toastr('error', 'Something went wrong. Please try again later.', 'Services Hours Update');
 						});
 			},
 		}

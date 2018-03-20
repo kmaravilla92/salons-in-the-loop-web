@@ -142,3 +142,36 @@ $(window).resize(backgroundResize);
 $(window).focus(backgroundResize);
 
 backgroundResize();
+
+// User Type Actions Restrictions
+
+function userTypeMatched(required_user_type, current_user_type) {
+  return required_user_type == current_user_type;
+}
+
+function showLogin() {
+  $('[href="#login-holder"]').trigger('click');
+}
+
+function requiresAuth(required_user_type, current_user_type) {
+
+  if(userId == 0){
+    alert('Please sign in as a ' + required_user_type);
+    showLogin();
+    return false;
+  }
+
+  if((required_user_type == 'client' && !userTypeMatched(required_user_type, current_user_type))) {
+    alert('Please sign in as a ' + required_user_type);
+    return false;
+  }
+}
+
+$(function() {
+  var current_user_type = $('[name="user_type"]').last().val()
+  $('.ra-book-appointment, .waiting-list').on('click', function() {
+    var required_user_type = $(this).attr('data-required_user_type');
+    console.log(required_user_type, current_user_type);
+    return requiresAuth(required_user_type, current_user_type);
+  });
+});

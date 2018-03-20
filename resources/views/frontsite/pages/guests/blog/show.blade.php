@@ -17,11 +17,17 @@
 						<div class="content-holder">
 							{!! $post['content'] !!}
 						</div>
-						<div class="clearfix">
+						<div class="pull-left">
+							@if(isset($post['previous_post']))
+								<a href="{{ $post['previous_post']['link'] }}" class="f-right">Read Previous Article</a>
+							@endif
+						</div>
+						<div class="pull-right">
 							@if(isset($post['next_post']))
 								<a href="{{ $post['next_post']['link'] }}" class="f-right">Read Next Article</a>
 							@endif
 						</div>
+						<div class="clearfix"></div>
 					</div>
 
 				</div>

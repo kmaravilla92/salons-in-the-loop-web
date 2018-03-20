@@ -5,47 +5,74 @@
 				<span class="f-right" style="color:#423857; font-size:12px; margin-top:5px;">All fields marked with an asterisk <span style="color:#cb4e4e;">(*)</span> are required.</span>
 			</h3>
 		</div>
-		<div class="form-holder">
+		<Loader
+			v-show="is_loading"
+		>
+		</Loader>
+		<div class="form-holder" v-show="!is_loading">
 			<ul class="clearfix pro-details">
 				<li class="half-width f-left">
 					<label for="">Select Category*</label>
 					<vSelect
 						multiple
+						name="category"
 						:value.sync="profile_info.owner_profile.category_decoded" 
 						:options="category_options"
+						v-validate="'required'"
 						></vSelect>
-					<!-- <select class="category-drop" name="" multiple v-model="profile_info.owner_profile.category_decoded">
-						<option value="Barber">Barber</option>
-						<option value="Hair Stylist">Hair Stylist</option>
-						<option value="Nail Artist">Nail Artist</option>
-					</select> -->
+						<span class="has-error">{{ errors.first('category') }}&nbsp;</span>
 				</li>
 				<li class="half-width f-right">
 					<label for="">Business Name</label>
-					<input type="text" name="" v-model="profile_info.owner_profile.business_name">
+					<input 
+							type="text" 
+							name="business name"
+							v-model="profile_info.owner_profile.business_name"
+						>
+					<span class="has-error">&nbsp;</span>
 				</li>
 				<li class="half-width f-left">
 					<label for="">Title*</label>
-					<!-- <select class="" name="">
-						<option></option>
-						<option></option>
-					</select> -->
-					<input type="text" name="" v-model="profile_info.owner_profile.title">
+					<select name="" id="" v-model="profile_info.owner_profile.title">
+						<option :value="title_option" v-for="title_option in title_options">{{title_option}}</option>
+					</select>
+					<span class="has-error">{{ errors.first('title') }}&nbsp;</span>
 				</li>
 				<li class="half-width f-right">
 					<label for="">Name*</label>
-					<input type="text" name="" v-model="profile_info.owner_profile.name">
+					<input 
+						type="text" 
+						name="name" 
+						v-validate="'required'"
+						v-model="profile_info.owner_profile.name"
+						:class="{'has-error': errors.has('name')}"
+					>
+					<span class="has-error">{{ errors.first('name') }}&nbsp;</span>
 				</li>
 				<li class="half-width f-left">
 					<label for="">Email Address*</label>
-					<input type="text" name="" v-model="profile_info.email">
+					<input 
+						type="text" 
+						name="email" 
+						v-validate="'required'"
+						v-model="profile_info.email"
+						:class="{'has-error': errors.has('email')}"
+					>
+					<span class="has-error">{{ errors.first('email') }}&nbsp;</span>
 				</li>
 				<li class="half-width f-right">
 					<label for="">Phone Number*</label>
-					<input type="text" name="" v-model="profile_info.phone_number">
+					<input 
+						type="text" 
+						name="phone number" 
+						v-validate="'required'"
+						v-model="profile_info.phone_number"
+						:class="{'has-error': errors.has('phone number')}"
+					>
+					<span class="has-error">{{ errors.first('phone number') }}&nbsp;</span>
 				</li>
 				<li class="full-width note f-left">
-					<p><span>Note</span> for mobile users please leave field as <span>blank</span> for pending location</p>
+					<p><span>Note:</span> Mobile trucks can use a professional account to manage daily locations.</p>
 				</li>
 				<li class="full-width f-left">
 					<label for="">Address</label>
@@ -53,33 +80,49 @@
 				</li>
 				<li class="half-width f-left">
 					<label for="">City *</label>
-					<input type="text" name="" v-model="profile_info.owner_profile.city">
+					<input 
+						type="text" 
+						name="city" 
+						v-model="profile_info.owner_profile.city"
+						v-validate="'required'"
+						:class="{'has-error': errors.has('city')}"
+					>
+					<span class="has-error">{{ errors.first('city') }}&nbsp;</span>
 				</li>
 				<li class="half-width f-right">
 					<label for="">State *</label>
-					<input type="text" name="" v-model="profile_info.owner_profile.state">
+					<input 
+						type="text" 
+						name="state" 
+						v-model="profile_info.owner_profile.state"
+						v-validate="'required'"
+						:class="{'has-error': errors.has('state')}"
+					>
+					<span class="has-error">{{ errors.first('state') }}&nbsp;</span>
 				</li>
 				<li class="full-width note f-left">
-					<label for="">General Space Description*</label>
-					<textarea name="name" rows="8" cols="80" v-model="profile_info.owner_profile.general_space_description"></textarea>
+					<label for="">Rental agreement *</label>
+					<textarea 
+						name="rental agreement" 
+						rows="8" 
+						cols="80" 
+						v-model="profile_info.owner_profile.general_space_description"
+						v-validate="'required'"
+						:class="{'has-error': errors.has('rental agreement')}"
+						placeholder="Edit Sample Rental Agreement" 
+						>
+					</textarea>
+					<span class="has-error">{{ errors.first('rental agreement') }}&nbsp;</span>
 				</li>
 			</ul>
-			<div class="upload-img">
-				<h3>Upload Profile Photo</h3>
-				<div class="img-uploaded">
-					<img 
-						:src="profile_info.profile_pic.path" 
-						alt=""
-					>
-					<input type="hidden" v-model="profile_info.profile_pic.name">
-				</div>
-				<div class="upload-btn">
-					<input type="file" v-on:change="chooseProfilePic">
-					<span class="btn btn-blue ease">UPLOAD PHOTOS</span>
-				</div>
-			</div>
+			<ProfilePicture
+				:profile_pic="profile_info.profile_pic"
+				@onProfilePicSelect="chooseProfilePic"
+				@onProfilePicRemove="removeProfilePic"
+			>
+			</ProfilePicture>
 		</div>
-		<div class="form-holder book-rental full-cnt">
+		<div class="form-holder book-rental full-cnt" v-show="!is_loading">
 			<div class="inner-title">
 				<h3>Gallery</h3>
 			</div>
@@ -107,15 +150,19 @@
 				<span href="#upload-holder-gallery-photos" class="btn btn-blue popup-link">UPLOAD PHOTOS</span>
 			</div>
 		</div>
-		<div class="btn-holder">
-			<button  class="btn btn-blue" @click="saveProfile">Save and Update</button>
+		<div class="btn-holder" v-show="!is_loading">
+			<p><span>Note:</span> Save changes before you view!</p>
+			<button 
+				class="btn btn-blue" 
+				@click="saveProfile">
+				Save and Update		
+			</button>
 			<a 
 				:href="'/profile-view/'+user_id+'/owner'" 
 				class="btn btn-violet-bright"
 				target="_blank">
 				View my Profile
 			</a>
-			<!-- <p>*Note for the programmer. View my profile button will show up after clicking save and update button</p> -->
 		</div>
 		<div id="upload-holder-gallery-photos" class="mfp-hide white-popup-block popup-holder login-popup">
 			<h1>UPLOAD <span>PHOTOS</span></h1>
@@ -154,11 +201,14 @@
 	import axios from 'axios';
 	import Dropzone from 'vue2-dropzone'
 	import vSelect from 'vue-select'
+	import ProfilePicture from '../../global/profile/edit/ProfilePicture.vue'
 	export default {
 		data() {
 			return {
 				user_id: userId,
 				upload_url: apiBaseUrl + 'rest/images',
+				is_loading: true,
+				save_hit: false,
 				profile_info: {
 					first_name: '',
 					last_name: '',
@@ -181,20 +231,12 @@
 						general_space_description: '',
 					}
 				},
-				category_options: [
-					'Hair Salon',
-					'Barber Shop',
-					'Nail Salon',
-					'Pop Up Salon',
-					'Wax Center',
-					'Braiding Salon',
-					'Hair Replacement Clinic',
-					'Beauty Spa',
-					'Tanning Salon',
-					'Boutique',
-					'Salon Suites',
-					'Other'
+				title_options: [
+					'Mr.', 
+					'Ms.', 
+					'Mrs.'
 				],
+				category_options: settings.owner_categories
 			}
 		},
 
@@ -213,6 +255,7 @@
 
 		created(){
 			this.fetchData();
+			// this.ifLeavingPage();
 
 			$('.popup-link').magnificPopup({
 				type: 'inline',
@@ -232,21 +275,38 @@
 		components: {
 			Dropzone,
 			vSelect,
+			ProfilePicture,
 		},
 
 		methods: {
 
 			saveProfile() {
-				console.log(this.profile_info);
-				var vm = this;
-					axios
-						.put(
-							apiBaseUrl + 'rest/users/' + userId, 
-							vm.profile_info
-						)
-						.then(function(response){
-							alert('Success!');
-						});
+				const vm = this;
+					vm
+						.$validator
+						.validateAll()
+						.then((valid)=>{
+							if(valid){
+								axios
+								.put(
+									apiBaseUrl + 'rest/users/' + userId, 
+									vm.profile_info
+								)
+								.then((response)=>{
+									vm.$toastr('success', 'Profile details successfully updated.', 'Profile Update');
+								},(error)=>{
+									vm.$toastr('error', 'Something went wrong. Please try again later.', 'Profile Update');
+								});
+							}else{
+								vm.$toastr('error', 'Oops, there were errors in the form. Please check and resubmit.', 'Profile Update');
+								$('body,html').animate({
+									scrollTop: $('input.has-error,textarea.has-error,select.has-error').first().offset().top
+								});
+							}
+						})
+						.catch((error)=>{
+							console.log(error)
+						});	
 			},
 
 			removeImage(image) {
@@ -254,14 +314,17 @@
 			},
 
 			fetchData(){
-				var vm = this;
+				const vm = this;
 					axios
 						.get(
 							apiBaseUrl + 'rest/users/' + userId
 						)
 						.then(function(response){
 							vm.profile_info = response.data;
-							console.log(response.data);
+							vm.is_loading = false;
+						}, (error)=>{
+							vm.$toastr('error', 'Something went wrong. Please try again later.', 'Profile Update');
+							vm.is_loading = false;
 						});
 			},
 
@@ -275,36 +338,21 @@
 				console.log(file, error, xhr);
 			},
 
-			chooseProfilePic(e){
-				var vm = this;
-				var file_reader = new FileReader();
-				var form_data = new FormData();
-					file_reader.onload = function(event){
-						form_data.append('file', e.target.files[0]);
-						axios
-							.post(
-								apiBaseUrl + 'rest/images',
-								form_data,
-								{
-									'Content-Type': 'multipart/form-data'
-								}
-							)
-							.then(function(response) {
-								var data = response.data;
-								if(data.success && data.image){
-									var image = data.image;
-										vm.profile_info.profile_pic.path = image.path;
-										vm.profile_info.profile_pic.name = image.name;
-								}
-							})
-					};
-					file_reader.readAsDataURL(e.target.files[0]);
-			},
-
 			getPhotos(type) {
 				return this.profile_info[type].filter(photo => {
 					return photo.deleted_at == null;
 				});
+			},
+
+			chooseProfilePic(profile_pic) {
+				this.profile_info.profile_pic = profile_pic;
+			},
+
+			removeProfilePic(profile_pic) {
+				$('[type="file"]').val('');
+				$('[type="file"]').change();
+				this.profile_info.profile_pic.name = '/frontsite/images/sitl-img.png';
+				this.profile_info.profile_pic.path =  '/frontsite/images/sitl-img.png';
 			}
 		}
 	}

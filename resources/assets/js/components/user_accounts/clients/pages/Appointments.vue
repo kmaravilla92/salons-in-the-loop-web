@@ -11,7 +11,6 @@
 					</ul>
 				</div>
 			</h3>
-
 		</div>
 		<Loader
 			v-if="is_loading"
@@ -35,9 +34,9 @@
 							<a href="#" @click.prevent=""><i class="fa fa-phone" aria-hidden="true"></i></a>
 							<a href="#" @click.prevent=""><i class="fa fa-mobile" aria-hidden="true"></i></a>
 						</div>
-						<h3>{{ appointment.professional.full_name }}</h3>
+						<h3>{{appointment.professional.full_name}}</h3>
 						<p>
-							Square Town, Square City, <br> Colorado - CO, 11010
+							{{appointment.professional.profile.full_address}}
 						</p>
 						<div class="rating">
 							<i class="fa fa-star" aria-hidden="true"></i>
@@ -109,7 +108,13 @@
 									class="btn btn-blue-b">
 									SEE DETAILS
 								</router-link>
-								<a href="#" class="link">Cancel</a>
+								<a 
+									href="#" 
+									class="link"
+									@click.prevent="cancelAppointment(appointment)"
+								>
+									{{appointment.status == 1 ? 'Cancel' : 'Canceled'}}
+								</a>
 							</div>
 						</div>
 					</div>
@@ -170,6 +175,11 @@
 						vm.is_loading = false;
 					});
 			},
+
+			cancelAppointment(appointment) {
+				appointment.status = 2;
+				this.$toastr('success', 'Appointment successfully cancelled.', 'Cancel Appointment')
+			}
 		},
 	}
 </script>

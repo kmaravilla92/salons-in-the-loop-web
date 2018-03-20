@@ -6,9 +6,13 @@
 		</div>
 
 		<div class="pro-details owner-pro-details">
+			<Loader
+				v-if="profile_view_requests.is_loading"
+			>
+			</Loader>
 			<div 
 				class="pro-holder"
-				v-for="(profile_view_request,index) in profile_view_requests"
+				v-for="(profile_view_request,index) in profile_view_requests.items"
 			>
 				<div class="img-holder">
 					<div class="img-over">
@@ -21,7 +25,7 @@
 				</div>
 				<div class="information help-req-owner">
 					<h3>{{ profile_view_request.viewer.full_name }}</h3>
-					<p>Square Town, Square City, Colorado - CO, 11010</p>
+					<p>{{profile_view_request.viewer.full_address}}</p>
 					<div class="rating">
 						<i class="fa fa-star" aria-hidden="true"></i>
 						<i class="fa fa-star" aria-hidden="true"></i>
@@ -62,56 +66,76 @@
 					</div>
 				</div>
 			</div>
-			<div style="text-align: center;" v-if="profile_view_requests.length == 0">No requests</div>
+			<div style="text-align: center;" v-if="profile_view_requests.items.length == 0 && !profile_view_requests.is_loading">No profile view requests.</div>
 		</div>
 		<br><br><br>
-		<div class="pagination-holder clearfix" v-if="profile_view_requests.length > 10">
-			<div class="f-left">
-
-			</div>
-			<div class="pagination f-right">
-				<a href="#">First</a>
-				<a href="#">Previous</a>
-				<a href="#">1</a>
-				<a href="#">2</a>
-				<a href="#">3</a>
-				<a href="#">Next</a>
-				<a href="#">Last</a>
+		<div class="pagination-holder clearfix">
+			<div class="pagination">
+				<pagination 
+					:records="profile_view_requests.total"
+					:perPage="profile_view_requests.per_page"
+					:countText="profile_view_requests.countText"
+					@paginate="fetchProfileViewRequests">
+				</pagination>
 			</div>
 		</div>
 	</div>
 </template>
 <script>
-	import axios from 'axios';
+	import axios from 'axios'
+	import {Pagination} from 'vue-pagination-2'
 	export default {
 		data() {
 			return {
 				user_id: userId,
-				is_loading: true,
-				profile_view_requests: []
+				profile_view_requests: {
+					is_loading: true,
+					items: [],
+					total: 0,
+					per_page: settings.pagination.per_page,
+					countText: 'Showing {from} to {to} of {count} My Profile Requests',
+				}
 			}
 		},
 
 		created() {
-			this.fetchProfileViewRequests();
+			this.fetchProfileViewRequests(1);
 		},
 
 		watch: {
 			'$route': 'fetchProfileViewRequests'
 		},
 
+		components: {
+			Pagination
+		},
+
 		methods: {
-			fetchProfileViewRequests() {
-				var vm = this;
+			fetchProfileViewRequests(page) {
+				const vm = this;
 				axios
-					.get(apiBaseUrl + 'rest/users/'+userId+'/profile-view-requests')
-					.then(function(response){
-						vm.profile_view_requests = response.data;
-						vm.is_loading = false;
+					.get(
+						apiBaseUrl + 'rest/users/'+userId+'/profile-view-requests',
+						{
+							params: {
+								page: page
+							}
+						}
+					)
+					.then((response)=>{
+						vm.profile_view_requests = {
+							is_loading: false,
+							items: response.data.data,
+							total: response.data.total,
+						}
+					},(error)=>{
+						vm.$toastr('error', 'Something went wrong. Please try again later.', 'Profile View Requests');
+						vm.profile_view_requests.is_loading = false;
 					});
 			},
 
 			updateRequestStatus(request, status) {
+				const vm = this;
 				axios
 					.put(
 						apiBaseUrl + 'rest/users/'+userId+'/profile-view-requests/' + request.id,
@@ -119,10 +143,13 @@
 							status: String(status)
 						}
 					)
-					.then(function(response){
+					.then((response)=>{
 						if(response.data.success){
 							request.status = status;
+							vm.$toastr('success', 'Request successfully ' + (status) + 'ed', 'Profile View Requests');
 						}
+					},(error)=>{
+						vm.$toastr('error', 'Something went wrong. Please try again later.', 'Profile View Requests');
 					});
 			}
 		}

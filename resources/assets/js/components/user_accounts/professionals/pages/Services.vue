@@ -5,11 +5,16 @@
 				<span class="f-right">All fields marked with an asterisk (*) are required.</span>
 			</h3>
 		</div>
-		<div class="form-holder">
+		<Loader
+			v-if="is_loading"
+			text="LOADING RECENT POSTED REQUESTS ..."
+		>	
+		</Loader>
+		<div class="form-holder" v-show="!is_loading">
 			<ul>
 				<li>
 					<div class="col service-name">
-						<p>Service Name</p>
+						<p>Product or Service</p>
 					</div>
 					<div class="col estimate-time">
 						<p>Estimate time duration</p>
@@ -20,13 +25,6 @@
 					<div class="col price t-center">
 						<p>Price</p>
 					</div>
-				</li>
-				<li v-if="is_loading" style="border: none;">
-					<Loader
-						v-if="is_loading"
-						text="LOADING RECENT POSTED REQUESTS ..."
-					>	
-					</Loader>
 				</li>
 				<li 
 					v-for="(service, index) in services"
@@ -85,7 +83,9 @@
 				><i class="fa fa-plus" aria-hidden="true"></i> Add another </a>
 			</div>
 		</div>
-		<div class="btn-holder">
+		<div class="btn-holder" v-show="!is_loading">
+			<p><span>Note:</span> Save changes before you view!</p>
+			<br>
 			<a 
 				href="#"
 				class="btn btn-blue"
@@ -100,7 +100,6 @@
 				View my Profile
 			</a>
 		</div>
-
 	</div>
 </template>
 
@@ -152,10 +151,13 @@
 					.post(apiBaseUrl + 'rest/users/'+userId+'/services', {
 						services: vm.services
 					})
-					.then(function(response){
+					.then((response)=>{
 						if(response.data.success){
-							alert('Services successfully saved!');
+							vm.services = response.data.services;
+							vm.$toastr('success', 'Services successfully updated.', 'Services Update');
 						}
+					},(error)=>{
+						vm.$toastr('error', 'Something went wrong. Please try again later.', 'Services Update');
 					});
 			},
 

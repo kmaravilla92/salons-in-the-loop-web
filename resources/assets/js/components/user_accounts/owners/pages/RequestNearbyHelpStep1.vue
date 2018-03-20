@@ -53,7 +53,6 @@
 
 						<h3>Select Days</h3>
 						<div class="check">
-
 							<div class="checkbox">
 								<input type="checkbox" value="Mon" v-model="posted_help_request.selected_days">
 								<span></span>
@@ -215,7 +214,7 @@
 
 <script>
 	import flatPickr from 'vue-flatpickr-component';
-  	import 'flatpickr/dist/flatpickr.css';
+  import 'flatpickr/dist/flatpickr.css';
 	export default {
 		props: ['posted_help_request'],
 		data() {

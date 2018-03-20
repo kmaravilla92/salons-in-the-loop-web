@@ -16,6 +16,7 @@ try {
 	require('../../../public/frontsite/js/lib/jquery-validation/dist/jquery.validate.min.js');
 	// require('../../../public/frontsite/js/lib/moment.min.js');
 	// require('../../../public/frontsite/js/fullcalendar.min.js');
+	require('vue-grecaptcha');
     require('bootstrap-sass');
 } catch (e) {}
 
@@ -58,3 +59,5 @@ if (token) {
 //     broadcaster: 'pusher',
 //     key: 'your-pusher-key'
 // });
+
+// Custom JS

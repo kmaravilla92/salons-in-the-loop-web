@@ -108,6 +108,10 @@ $(function(){
                                 }
                             }
 
+                            if(resp.has_local_storage){
+                                localStorage.setItem(resp.has_local_storage.key, resp.has_local_storage.value);
+                            }
+
                             if(resp.redirect_to) {
                                 if(resp.timeOut) {
                                     setTimeout(function() {

@@ -25,7 +25,7 @@
 								<img src="/frontsite/images/contact-ico2.png" alt="">
 							</div>
 							<div class="content-holder">
-								<p>8324625333</p>
+								<p><a href="tel:8322369929" style="color: #000;">832 236 9929</a></p>
 							</div>
 						</li>
 						<li>

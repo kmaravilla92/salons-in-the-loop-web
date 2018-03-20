@@ -54,10 +54,11 @@
 			return {
 				is_loading: true,
 				icon_tiles: [
-					{link: {name: 'client.search'}, title: 'Search Professional', image: '/frontsite/images/search-ico.png', statistics_count: null },
+					// {link: {name: 'client.search'}, title: 'Search Professionals', image: '/frontsite/images/search-ico.png', statistics_count: null },
+					{link: {name: 'client.search'}, title: 'Search and Book', image: '/frontsite/images/search-ico.png', statistics_count: null },
 					{link: {name: 'client.appointments'}, title: 'My Appointments', image: '/frontsite/images/appointment-ico.png', statistics_count: null},
-					{link: {name: 'client.posted-requests'}, title: 'My Posted Requests', image: '/frontsite/images/posted-ico.png', statistics_count: 19},
-					{link: {name: 'client.name-my-own-price'}, title: 'Name My Own Price', image: '/frontsite/images/post-space.png', statistics_count: 89},
+					{link: {name: 'client.posted-requests'}, title: 'My Posted Requests', image: '/frontsite/images/posted-ico.png', statistics_count: null},
+					{link: {name: 'client.name-my-own-price'}, title: 'Name My Own Price', image: '/frontsite/images/post-space.png', statistics_count: null},
 				],
 				posted_requests: {
 					statistics: {
@@ -68,6 +69,12 @@
 					}
 				}
 			}
+		},
+		mounted() {
+			// $('.menu-content li > a > p')
+			// 	.height(
+			// 		$('.menu-content li:first > a > p').height()
+			// 	)
 		},
 		created() {
 			this.fetchData();
@@ -87,10 +94,11 @@
 							recent_only: true
 						}
 					})
-					.then(function(response){
-						vm.posted_requests.listings.recent = response.data;
+					.then((response)=>{
+						vm.posted_requests.listings.recent = response.data.data;
 						vm.is_loading = false;
-					}).catch(function(){
+					},function(){
+						vm.$toastr('error', 'Something went wrong. Please try again later.', 'Posted Requests List');
 						vm.is_loading = false;
 					});
 			}

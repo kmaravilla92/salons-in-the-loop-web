@@ -15,7 +15,7 @@
 				<li v-for="posted_help_request in posted_help_requests.items">
 					<div class="clearfix title-details">
 						<div class="f-left">
-							<p><span>Professional Types </span>{{posted_help_request.category}}</p>
+							<p><span>Professional Types </span>{{posted_help_request.category_csv}}</p>
 							<h3>{{ posted_help_request.title }}</h3>
 							<label for=""><span>Posted</span> {{posted_help_request.created_at}}</label>
 						</div>
@@ -78,18 +78,14 @@
 					</div>
 				</li>
 			</ul>
-			<div class="pagination-holder clearfix" v-if="posted_help_requests.items.length > 10">
-				<div class="f-left">
-					<p>Showing 8 out of 8 of My Posted Help Request</p>
-				</div>
-				<div class="pagination f-right">
-					<a href="#">First</a>
-					<a href="#">Previous</a>
-					<a href="#">1</a>
-					<a href="#">2</a>
-					<a href="#">3</a>
-					<a href="#">Next</a>
-					<a href="#">Last</a>
+			<div class="pagination-holder clearfix">
+				<div class="pagination">
+					<pagination 
+						:records="posted_help_requests.total"
+						:perPage="posted_help_requests.per_page"
+						:countText="posted_help_requests.countText"
+						@paginate="setPage">
+					</pagination>
 				</div>
 			</div>
 		</div>
@@ -97,14 +93,18 @@
 </template>
 
 <script>
-	import axios from 'axios';
-
+	import axios from 'axios'
+	import {Pagination} from 'vue-pagination-2'
 	export default {
 		data() {
 			return {
 				posted_help_requests: {
 					is_loading: true,
-					items: []
+					items: [],
+					current_page: 1,
+					total: 0,
+					per_page: settings.pagination.per_page,
+					countText: 'Showing {from} to {to} of {count} My Posted Help Requests',
 				},
 			}
 		},
@@ -121,12 +121,25 @@
 			'$route' : 'fetchData'
 		},
 
+		components: {
+			Pagination
+		},
+
 		methods: {
+
+			setPage(page) {
+				this.posted_help_requests.current_page = page;
+				this.fetchData();
+			},
 
 			_fetchPostedHelpRequests() {
 				return axios
 						.get(
-							apiBaseUrl + 'rest/owners/' + userId + '/help-requests'
+							apiBaseUrl + 'rest/owners/' + userId + '/help-requests', {
+								params: {
+									page: this.posted_help_requests.current_page
+								}
+							}
 						);
 			},
 
@@ -136,13 +149,13 @@
 					this._fetchPostedHelpRequests()
 				])
 				.then(axios.spread(function(posted_help_requests) {
-					vm.posted_help_requests = {
-						is_loading: false,
-						items: posted_help_requests.data
-					};
+					const data = posted_help_requests.data
+					vm.posted_help_requests.items = data.data;
+					vm.posted_help_requests.total = data.total;
+					vm.posted_help_requests.is_loading = false;
 				}))
 				.catch(function(error){
-					alert('Something went wrong. Please refresh your browser.');
+					vm.$toastr('error', 'Something went wrong. Please try again later.', 'Posted Help Requests List');
 					vm.posted_help_requests.is_loading = false;
 				});
 			}

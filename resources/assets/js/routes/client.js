@@ -88,7 +88,7 @@ export default [
 	},
 	{
 		path: '/reviews-and-ratings', 
-		component: require('../components/user_accounts/clients/pages/ReviewRatings.vue'),
+		component: require('../components/user_accounts/global/reviews/List.vue'),
 		in_menu: true,
     meta: {
       title: 'Reviews and Ratings',
@@ -96,19 +96,20 @@ export default [
       requires_dashboard: true,
       has_children: false,
       children: []
-    }
-	},
-    {
-    	path: '/reviews-and-ratings/write-a-review',
-    	component: require('../components/user_accounts/clients/pages/WriteReview.vue'), 
-      meta: {
-        title: 'Reviews and Ratings - Write a Review',
-        in_menu: false,
-        requires_dashboard: true,
-        has_children: false,
-        children: []
-      }
     },
+	},
+  {
+    path: '/reviews-and-ratings/write-a-review/:record_type/:record_id/:for_user_id',
+    name: 'client.write-a-review',
+    component: require('../components/user_accounts/global/reviews/Write.vue'), 
+    meta: {
+      title: 'Reviews and Ratings - Write a Review',
+      in_menu: false,
+      requires_dashboard: true,
+      has_children: false,
+      children: []
+    }
+  },
 	{
 		path: '/account-settings', 
 		title: 'Account Settings', 
@@ -169,34 +170,48 @@ export default [
       requires_dashboard: false,
       has_children: false,
       children: []
-    }
+    },
+    children: [
+      {
+        path: ':id?', 
+        name: 'client.name-my-own-price.step-1', 
+        component: require('../components/user_accounts/clients/pages/NameMyOwnPriceStep1.vue'),
+        meta: {
+          title: 'Search',
+          in_menu: false,
+          requires_dashboard: false,
+          has_children: false,
+          children: []
+        }
+      },
+      {
+        path: ':id?/pre-payment', 
+        name: 'client.name-my-own-price.pre-payment', 
+        component: require('../components/user_accounts/clients/pages/NameMyOwnPricePrePayment.vue'),
+        meta: {
+          title: 'Search',
+          in_menu: false,
+          requires_dashboard: false,
+          has_children: false,
+          children: []
+        }
+      },
+      {
+        path: ':id?/final', 
+        name: 'client.name-my-own-price.complete', 
+        component: require('../components/user_accounts/clients/pages/NameMyOwnPriceComplete.vue'),
+        meta: {
+          title: 'Search',
+          in_menu: false,
+          requires_dashboard: false,
+          has_children: false,
+          children: []
+        }
+      }
+    ]
   },
   {
-    path: '/name-my-own-price/:id/pre-payment', 
-    name: 'client.name-my-own-price.pre-payment', 
-    component: require('../components/user_accounts/clients/pages/NameMyOwnPricePrePayment.vue'),
-    meta: {
-      title: 'Search',
-      in_menu: false,
-      requires_dashboard: false,
-      has_children: false,
-      children: []
-    }
-  },
-  {
-    path: '/name-my-own-price/:id/final', 
-    name: 'client.name-my-own-price.complete', 
-    component: require('../components/user_accounts/clients/pages/NameMyOwnPriceComplete.vue'),
-    meta: {
-      title: 'Search',
-      in_menu: false,
-      requires_dashboard: false,
-      has_children: false,
-      children: []
-    }
-  },
-  {
-    path: '/:pro_id/waiting-list/sign-in/:waiting_list_id?', 
+    path: '/:pro_id/waiting-list/sign-in', 
     name: 'client.waiting-list.step1', 
     component: require('../components/user_accounts/clients/pages/WaitingList.vue'),
     meta: {
@@ -205,19 +220,45 @@ export default [
       requires_dashboard: false,
       has_children: false,
       children: []
-    }
-  },
-  {
-    path: '/:pro_id/waiting-list/sign-in/:waiting_list_id/final', 
-    name: 'client.waiting-list.final', 
-    component: require('../components/user_accounts/clients/pages/WaitingListFinalStep.vue'),
-    meta: {
-      title: 'Search',
-      in_menu: false,
-      requires_dashboard: false,
-      has_children: false,
-      children: []
-    }
+    },
+    children: [
+      {
+        path: ':waiting_list_id?/step-1', 
+        name: 'client.waiting-list.step-1', 
+        component: require('../components/user_accounts/clients/pages/WaitingListStep1.vue'),
+        meta: {
+          title: 'Search',
+          in_menu: false,
+          requires_dashboard: false,
+          has_children: false,
+          children: []
+        }
+      },
+      {
+        path: ':waiting_list_id?/step-2', 
+        name: 'client.waiting-list.step-2', 
+        component: require('../components/user_accounts/clients/pages/WaitingListStep2.vue'),
+        meta: {
+          title: 'Search',
+          in_menu: false,
+          requires_dashboard: false,
+          has_children: false,
+          children: []
+        }
+      },
+      {
+        path: ':waiting_list_id?/step-3', 
+        name: 'client.waiting-list.step-3', 
+        component: require('../components/user_accounts/clients/pages/WaitingListStep3.vue'),
+        meta: {
+          title: 'Search',
+          in_menu: false,
+          requires_dashboard: false,
+          has_children: false,
+          children: []
+        }
+      },
+    ]
   },
   {
     path: '/book-appointment/:pro_id', 

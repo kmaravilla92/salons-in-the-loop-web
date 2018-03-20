@@ -14,7 +14,7 @@
 					<button 
 						type="button" 
 						name="button"
-						@click.prevent="fetchData"
+						@click.prevent="fetchPostedRequests(1)"
 					>
 						<i class="fa fa-search" aria-hidden="true"></i>
 					</button>
@@ -25,14 +25,14 @@
 		<div class="wrapper">
 			<div class="content-container app-client-req-details help-req booked-rental search-client-req-details search-listing">
 				<div class="inner-title">
-					<h3>Search Result(s) Found : <span style="color:#000000;">{{postedRequests.length}}</span>
+					<h3>Search Result(s) Found : <span style="color:#000000;">{{posted_requests.total}}</span>
 						<div class="sort-holder f-right">
 							<a class="sort-link">Sort by  <i class="fa fa-chevron-down" aria-hidden="true"></i></a>
 							<ul class="sort">
-								<li><a href="#">All</a></li>
-								<li><a href="#">Recent Post</a></li>
-								<li><a href="#">Recommended</a></li>
-								<li><a href="#">Near me</a></li>
+								<li><a href="#" @click.prevent="alert('FEATURE UNDER DEVELOPMENT')">All</a></li>
+								<li><a href="#" @click.prevent="alert('FEATURE UNDER DEVELOPMENT')">Recent Post</a></li>
+								<li><a href="#" @click.prevent="alert('FEATURE UNDER DEVELOPMENT')">Recommended</a></li>
+								<li><a href="#" @click.prevent="alert('FEATURE UNDER DEVELOPMENT')">Near me</a></li>
 							</ul>
 						</div>
 					</h3>
@@ -53,10 +53,9 @@
 								<p>Budget</p>
 							</div>
 						</li>
-						<li v-if="is_loading">
+						<li v-if="posted_requests.is_loading">
 							<Loader
-								v-if="is_loading"
-								text="LOADING POSTED REQUESTS ..."
+								v-if="posted_requests.is_loading"
 							>	
 							</Loader>
 						</li>
@@ -76,9 +75,8 @@
 								</a>
 							</div>
 							<div class="clearfix title-details">
-
 								<div class="f-left">
-									<p><span>User Types </span>{{ posted_request.professional_types }}</p>
+									<p><span>User Types </span>{{ posted_request.professional_types_csv }}</p>
 									<h3>{{ posted_request.title }} </h3>
 									<label for=""><span>Posted</span> {{posted_request.created_at }}</label>
 								</div>
@@ -88,10 +86,8 @@
 								</div>
 								<div class="f-right posted">
 									<p>{{posted_request.created_at }}</p>
-
 								</div>
 								<div class="clearfix"></div>
-
 								<div class="content">
 									<p>{{ posted_request.message }} </p>
 								</div>
@@ -112,7 +108,6 @@
 											</li>
 										</ul>
 									</div>
-
 									<div class="btn-holder">
 										<router-link 
 											v-bind:to="'/clients/posted-requests/search/' + posted_request.id" 
@@ -120,27 +115,21 @@
 											SEE DETAILS
 										</router-link>
 									</div>
-							</div>
-
+								</div>
 							</div>
 						</li>
 					</ul>
-					<div class="pagination-holder clearfix" v-if="postedRequests.length > 10">
-						<div class="f-left">
-						</div>
-						<div class="pagination f-right">
-							<a href="#">First</a>
-							<a href="#">Previous</a>
-							<a href="#">1</a>
-							<a href="#">2</a>
-							<a href="#">3</a>
-							<a href="#">Next</a>
-							<a href="#">Last</a>
+					<div class="pagination-holder clearfix">
+						<div class="pagination">
+							<pagination 
+								:records="posted_requests.total"
+								:perPage="posted_requests.per_page"
+								:countText="posted_requests.countText"
+								@paginate="setPage">
+							</pagination>
 						</div>
 					</div>
-
 				</div>
-
 			</div>
 		</div>
 	</section>
@@ -163,11 +152,18 @@
 		}
 	}
 
+	import {Pagination} from 'vue-pagination-2'
+
 	export default {
 		data() {
 			return {
-				is_loading: true,
-				posted_requests: [],
+				posted_requests: {
+					is_loading: true,
+					items: [],
+					total: 0,
+					per_page: settings.pagination.per_page,
+					countText: 'Showing {from} to {to} of {count} Posted Requests',
+				},
 				search: {
 					filter: {
 						professional_type: ''
@@ -207,11 +203,15 @@
 			this.$root.main.show = false;
 			// $('.pro-bg.banner-search').show();
 
-			this.fetchData();
+			this.fetchPostedRequests(1);
 		},
 
 		watch: {
-			'$route': 'fetchData'
+			'$route': 'fetchPostedRequests'
+		},
+
+		components: {
+			Pagination
 		},
 
 		computed: {
@@ -221,7 +221,7 @@
 				// 	return this.posted_requests;
 				// }
 				return this
-						.posted_requests;
+						.posted_requests.items;
 						// .filter(function(posted_request) {
 						// 	return (posted_request.professional_types||'').split(',').indexOf(this.search.filter.professional_type) > -1;
 						// }.bind(this));
@@ -229,24 +229,33 @@
 		},
 
 		methods: {
-			fetchData() {
+			
+			setPage(page){
+				this.fetchPostedRequests(page);
+			},
+
+			fetchPostedRequests(page) {
 				var vm = this;
-					vm.is_loading = true;
-					vm.posted_requests = [];
+					vm.posted_requests.is_loading = true;
 					axios
 						.get(
 							apiBaseUrl + 'rest/posted-requests',
 							{
 								params: {
-									'filters[professional_types]': vm.search.filter.professional_type
+									'filters[professional_types]': vm.search.filter.professional_type,
+									page: page
 								} 
 							}
 						)
 						.then(function(response){
-							vm.posted_requests = response.data;
-							vm.is_loading = false;
-						}).catch(function(){
-							vm.is_loading = false;
+							vm.posted_requests = {
+								items: response.data.data,
+								total: response.data.total,
+								is_loading: false
+							};
+						}).catch(function(error){
+							vm.posted_requests.is_loading = false;
+            				vm.$toastr('error', 'Something went wrong. Please try again later.', 'Posted Request Search');
 						});
 			},
 		}

@@ -46,7 +46,8 @@ class BlogController extends Controller
     	try{
   			$api_response = $this->http_client->get('rest/blog-posts/' . $slug, [
   				'query' => [
-  					'include_next_post' => true
+  					'include_next_post' => true,
+                    'include_previous_post' => true
   				]
   			]);
   			$post = json_decode($api_response->getBody(), true);
@@ -55,6 +56,11 @@ class BlogController extends Controller
 					'slug' => $post['next_post']['slug']
 				]);
   			}
+            if(isset($post['previous_post'])){
+                $post['previous_post']['link'] = route('frontsite.guests.blog.show', [
+                    'slug' => $post['previous_post']['slug']
+                ]);
+            }
             $recent_posts = $this->_getRecentPosts([]);
   		}catch(\Exception $e){
   			$error_message = $e->getResponse()->getBody()->getContents();

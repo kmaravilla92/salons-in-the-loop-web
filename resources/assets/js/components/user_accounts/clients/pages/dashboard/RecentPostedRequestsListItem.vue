@@ -1,9 +1,9 @@
 <template>
 	<li>
 		<div class="content-holder">
-			<h5><span>User Type</span> {{posted_request.professional_types}}</h5>
+			<h5><span>User Type</span> {{posted_request.professional_types_csv}}</h5>
 			<router-link v-bind:to="'/posted-requests/' + posted_request.id">
-				{{posted_request.title}}
+				{{posted_request.title_short}}
 			</router-link>
 			<br>
 			<p><span>Posted</span> {{posted_request.created_at}}</p>

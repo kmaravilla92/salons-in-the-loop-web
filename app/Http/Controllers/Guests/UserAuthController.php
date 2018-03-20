@@ -46,22 +46,34 @@ class UserAuthController extends Controller
                     $api_user_request = $this->http_client->get('rest/users/'.$sentinel_user->id);
                     $api_user = json_decode($api_user_request->getBody()->getContents(), true);
                     
-                    session([
+                    $user_info = [
                         'sitl' => [
                             'user' => array_merge([
                                 'id' => $sentinel_user->id,
                                 'type' => $role
                             ],$api_user)
                         ],
-                    ]);
+                    ];
+
+                    session($user_info);
 
                     if(env('FIREBASE_ENABLED')){
                         $this->http_client->get('set-presence/'.$sentinel_user->id.'/true');
                     }
 
+                    $response['has_local_storage'] = [
+                        'key' => 'user_info',
+                        'value' => json_encode($user_info)
+                    ];
+
                     $response['redirect_to'] = route('frontsite.user.account', [
                         'user_type' => $role
                     ]).'#dashboard';
+
+                    if(isset($request->redirect_to)){
+                        $response['redirect_to'] = $request->redirect_to;
+                    }
+
                     break;
                 }
             }

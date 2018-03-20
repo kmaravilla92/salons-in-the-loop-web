@@ -25,7 +25,18 @@ export default [
 	    }
 	},
 	{
-		
+		path: '/space-rental/create',  
+		component: require('../components/user_accounts/owners/pages/SpaceRentalCreate.vue'),
+		name: 'owner.posted-rentals.create',
+		meta: {
+	      title: 'Create Space Rental',
+	      in_menu: false,
+	      requires_dashboard: false,
+	      has_children: false,
+	      children: []
+	    }
+	},
+	{
 		path: '/posted-rentals',  
 		component: require('../components/user_accounts/owners/pages/PostedRentals.vue'),
 		name: 'owner.posted-rentals',
@@ -89,7 +100,7 @@ export default [
 	},
 	{
 		path: '/reviews-and-ratings', 
-		component: require('../components/user_accounts/owners/pages/ReviewRatings.vue'),
+		component: require('../components/user_accounts/global/reviews/List.vue'),
 		name: 'owner.review-ratings',
 		meta: {
 	      title: 'Reviews and Ratings',
@@ -98,6 +109,18 @@ export default [
 	      has_children: false,
 	      children: []
 	    }
+	},
+	{
+		path: '/reviews-and-ratings/write-a-review/:record_type/:record_id/:for_user_id',
+		name: 'client.write-a-review',
+		component: require('../components/user_accounts/global/reviews/Write.vue'), 
+		meta: {
+			title: 'Reviews and Ratings - Write a Review',
+			in_menu: false,
+			requires_dashboard: true,
+			has_children: false,
+			children: []
+		}
 	},
 	{
 		path: '/account-settings',

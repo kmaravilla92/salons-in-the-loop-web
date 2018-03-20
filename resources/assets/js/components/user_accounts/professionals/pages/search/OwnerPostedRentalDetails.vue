@@ -3,7 +3,12 @@
 		<div class="banner-container clearfix pro-bg">
 			<div class="wrapper">
 				<p class="f-left">Help Request</p>
-				<a href="#" class="f-right">Back to <span style="color:#ffb1b1;">Search Listing</span></a>
+				<router-link
+					:to="{ name: 'professional.owner.help-requests.search' }"
+					class="f-right"
+				>
+					Back to <span style="color:#ffb1b1;">Search Listing</span>
+				</router-link>
 			</div>
 		</div>
 		<div class="wrapper">
@@ -17,7 +22,10 @@
 					<div v-if="!posted_rental.is_loading">
 						<div class="client-details">
 							<div class="img-holder">
-								<img src="/frontsite/images/owner1.jpg" alt="">
+								<img 
+										:src="posted_rental.item.owner.profile_pic" 
+										:alt="posted_rental.item.owner.profile_pic"
+									>
 							</div>
 							<h3> <span style="color:#88629a;">Salon Business</span> <br> Maggie Cui</h3>
 							<a href="#" class="btn btn-violet-b">See Profile</a>
@@ -25,7 +33,7 @@
 						<div class="request-details">
 							<div class="clearfix title-details">
 								<div class="f-left">
-									<p><span>User Types </span>{{posted_rental.item.category}}</p>
+									<p><span>User Types </span>{{posted_rental.item.category_csv}}</p>
 									<h3>{{posted_rental.item.title}} </h3>
 									<label for=""><span>Posted</span> {{posted_rental.item.created_at}}</label>
 								</div>
@@ -35,7 +43,7 @@
 								</div>
 								<div class="f-right space">
 									<p>Spaces available</p>
-									<h5>2</h5>
+									<h5>{{posted_rental.item.number_of_available_spaces}}</h5>
 								</div>
 
 							</div>
@@ -59,7 +67,7 @@
 										</li>
 										<li>
 											<h5>Desired End Date</h5>
-											<p><i class="fa fa-calendar" aria-hidden="true"></i> 1{{posted_rental.item.end_date}}</p>
+											<p><i class="fa fa-calendar" aria-hidden="true"></i> {{posted_rental.item.end_date}}</p>
 										</li>
 										<li>
 											<h5>Desired Start Time</h5>
@@ -77,21 +85,26 @@
 								</div>
 								<div class="requirements">
 									<h3>Requirements</h3>
-									<ul>
-										<li>Allow Reoccur</li>
-										<li>Require license copy</li>
-										<li>Additional time will pay additional fee in cash before starting additional time.  </li>
-										<li>You may contact the owner to request to edit a rental or have a rental created for you.</li>
+									<ul v-if="posted_rental.item.requirements_decoded.length > 0">
+										<li
+											v-for="service_option in posted_rental.item.requirements_decoded"
+										>
+											{{service_option}}
+										</li>
 									</ul>
+									<p
+										v-if="!posted_rental.item.requirements_decoded.length"
+									>
+										No service options available.
+									</p>
 								</div>
-								</div>
-
+							</div>
 						</div>
 						<div class="cancellation form-holder">
 							<div class="checkbox">
-								<input type="checkbox" name="" value="">
+								<input type="checkbox" name="" value="" v-model="agree">
 								<span></span>
-							</div><p>By checking this, you indicate that you have read and agree to the <a href="#">Cancellation</a> and <a href="#">Refund Policy</a>.</p>
+							</div><p>By checking this, you indicate that you have read and agree to the <a href="/terms-and-conditions" target="_blank">Cancellation</a> and <a href="/terms-and-conditions" target="_blank">Refund Policy</a>.</p>
 						</div>
 						<div class="btn-holder write-review">
 							<a href="#" class="btn btn-blue" @click.prevent="bookRental">BOOK RENTAL</a>
@@ -107,13 +120,15 @@
 	export default {
 		data() {
 			return {
+				user_id: userId,
 				posted_rental: {
 					item: {
 						id: this.$route.params.id
 					},
 					is_loading: true
 				},
-				posted_rental_application: null
+				posted_rental_application: null,
+				agree: false,
 			}
 		},
 
@@ -157,17 +172,28 @@
 							this._fetchPostedRental(),
 							this._fetchProBooking(),
 						])
-						.then(axios.spread(function(posted_rental, posted_rental_application){
+						.then(axios.spread((posted_rental, posted_rental_application)=>{
 							vm.posted_rental.item = posted_rental.data;
 							// vm.posted_rental_application = posted_rental_application.data.application;
 							vm.posted_rental.is_loading = false;
-						})).catch(function(){
+						}),(error)=>{
 							vm.posted_rental.is_loading = false;
-						});
+            				vm.$toastr('error', 'Something went wrong. Please try again later.', 'Rental Details');
+						})
 			},
-
+			
 			bookRental() {
-				alert('FEATURE UNDER DEVELOPMENT.')
+				if(!this.agree){
+					alert('You must acknowledge the agreenment first before you can proceed.');
+					return false;
+				}
+
+				this.$parent.$router.push({
+					name: 'professional.owner.posted-rentals.book.step-1',
+					params: {
+						posted_rental_id: this.posted_rental.item.id
+					}
+				});
 			}
 		}
 	}

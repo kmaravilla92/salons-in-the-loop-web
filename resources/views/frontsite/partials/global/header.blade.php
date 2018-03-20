@@ -34,25 +34,25 @@
 <script>
 	var apiBaseUrl = "{{ config('app.api.base_uri') }}";
 	var userId = "{{session('sitl.user.id', 0)}}";
-	var user = {!! json_encode($laravel_user) !!};
-	var settings = {
-		professional_types: {!! json_encode(config('settings.professional_types')) !!}
-	};
+	var user = JSON.parse(localStorage.getItem('user_info')).sitl.user || JSON.parse({!! json_encode($laravel_user) !!}) || {};
+	var settings = {!! json_encode(config('settings')) !!};
 </script>
 </head>
 <body rel="home-page">
-<input type="hidden" name="user_type" id="user_type" value="{{session('sitl.user.type','client')}}">
+<input type="hidden" name="user_type" id="user_type" value="{{session('sitl.user.type',session('user_type', 'client'))}}">
 <section id="main-container" class="@yield('main_container_css', '')">
 	<div class="dashboard">
-		<header class="clearfix inner">
+		<header class="clearfix @if(Request::is('home')) home @else inner @endif">
 			<div class="header-wrapper">
 				<div class="clearfix">
 					<div class="logo-holder f-left">
-						<a href="{{route('frontsite.guests.home')}}"><img src="/frontsite/images/logo-inner.png"  alt=""></a>
+						<a href="{{route('frontsite.guests.home')}}">
+							<img src="/frontsite/images/logo{{Request::is('home') ? '' : '-inner'}}.png"  alt="Main logo">
+						</a>
 					</div>
 					@if(!$laravel_user)
 						<ul class="f-right search-nav">
-							<li><a href="#"><i class="fa fa-search" aria-hidden="true"></i></a></li>
+							<li><a href="{{ route('frontsite.user.account', ['type'=>'client', 'extra'=>'#/search']) }}"><i class="fa fa-search" aria-hidden="true"></i> Search Professionals</a></li>
 							<li><a href="#login-holder" class="popup-link">Login</a></li>
 							<li><a href="{{ route('frontsite.guests.user-registration.step-1') }}">Sign Up</a></li>
 						</ul>
@@ -66,12 +66,12 @@
 							<li class="welcome">
 								<p>Welcome <a href="{{ route('frontsite.user.account', ['user_type' => session('sitl.user.type','client')]) }}#dashboard">{{ $laravel_user['first_name'] }}</a></p>
 							</li>
-							<li>
-								<a href="" class="noti-holder">
+							<li id="popup-notifications">
+								<a href="{{ route('frontsite.user.account', ['type'=>'client', 'extra'=>'#/search']) }}" class="noti-holder">
 									<img src="/frontsite/images/noti-ico.png" alt="">
-									<div class="noti-count ease">
-										<p>16</p>
-									</div>
+									<!-- <div class="noti-count ease">
+										<p>0</p>
+									</div> -->
 								</a>
 							</li>
 							<li><a href="#"><i class="fa fa-search" aria-hidden="true"></i></a></li>

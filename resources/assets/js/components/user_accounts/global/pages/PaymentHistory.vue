@@ -34,9 +34,14 @@
 					:payment="payment"
 				>
 				</PaymentHistoryListItem>
+				<li
+					v-if="!filteredPayments.length"
+				>
+					<p>No payment transactions available.</p>
+				</li>
 			</ul>
 		</div>
-		<div class="pagination-holder clearfix" v-if="payments.length > 10">
+		<div class="pagination-holder clearfix" v-if="filteredPayments.length > 10">
 			<div class="pagination f-right">
 				<a href="#">First</a>
 				<a href="#">Previous</a>
@@ -97,7 +102,7 @@
 		methods: {
 			fetchPayments() {
 				axios
-					.get('http://api.sitl.dev/v1/rest/users/'+userId+'/payment-history')
+					.get(apiBaseUrl + 'rest/users/'+userId+'/payment-history')
 					.then(function(resp){
 						this.payments = resp.data.data;
 					}.bind(this));

@@ -35,14 +35,16 @@ class UserProfileController extends Controller
 
 		$is_private = $relationship['is_private'];
 		$profile_view_request = $relationship['profile_view_request'];
-
+		$is_self_viewing = $this->isSelfViewing($user_id);
+		
 		return view(
 			'frontsite.pages.guests.user.profile', 
 			compact(
 				'profile',
 				'user_type',
 				'is_private',
-				'profile_view_request'
+				'profile_view_request',
+				'is_self_viewing'
 			)
 		);
 	}
@@ -124,5 +126,11 @@ class UserProfileController extends Controller
 			'is_private' => $is_private,
 			'profile_view_request' => $profile_view_request
 		];
+	}
+
+	protected function isSelfViewing($profile_id)
+	{
+		$sentinel_user = \Sentinel::getUser();
+		return isset($sentinel_user) && $sentinel_user->id == $profile_id;
 	}
 }

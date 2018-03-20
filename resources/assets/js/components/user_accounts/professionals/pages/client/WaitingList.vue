@@ -14,7 +14,7 @@
 		</div>
 		<Loader
 			v-if="is_loading"
-			text="LOADING POSTED REQUESTS ..."
+			text="LOADING WAITING LIST ..."
 		>	
 		</Loader>
 		<div 
@@ -64,7 +64,8 @@
 			</ul>
 		</div>
 		<p
-			v-if="waiting_list.length">
+			v-if="!is_loading && waiting_list.length == 0"
+		>
 			No list available.
 		</p>
 		<div class="pagination-holder clearfix" v-if="waiting_list.length > 10">
@@ -84,13 +85,21 @@
 </template>
 
 <script>
-	import axions from 'axios';
+	import axios from 'axios';
 	export default {
 		data() {
 			return {
 				is_loading: true,
 				waiting_list: [] 
 			}
+		},
+
+		mounted() {
+			$( ".sort-link" ).click(function() {
+				$( ".sort" ).slideToggle( "slow", function() {
+				// Animation complete.
+				});
+			});
 		},
 
 		created() {

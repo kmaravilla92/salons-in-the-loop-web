@@ -7,13 +7,12 @@
 		<div class="request-details">
 			<Loader
 				v-if="posted_help_request.is_loading"
-				text="LOADING POSTED HELP REQUEST DETAILS ..."
 			>	
 			</Loader>
 			<div v-if="!posted_help_request.is_loading">
 				<div class="clearfix title-details">
 					<div class="f-left">
-						<p><span>User Types </span>{{posted_help_request.item.category}}</p>
+						<p><span>User Types </span>{{posted_help_request.item.category_csv}}</p>
 						<h3>{{posted_help_request.item.title}} </h3>
 						<label for=""><span>Posted</span> Today {{posted_help_request.item.created_at}}</label>
 					</div>
@@ -80,10 +79,10 @@
 
 				<div v-if="!postedRequestHasHiredPro">
 					<div class="cancellation">
-						<p>See <a href="#">Cancellation</a> and <a href="#">Refund Policy</a>.</p>
+						<p>See <a href="/terms-and-conditions" target="_blank">Cancellation</a> and <a href="terms-and-conditions" target="_blank">Refund Policy</a>.</p>
 					</div>
 					<div class="btn-holder write-review">
-						<a href="#" class="btn btn-red-b">CANCEL SERVICE</a>
+						<a href="#" class="btn btn-red-b" @click.prevent="cancelService">CANCEL SERVICE</a>
 					</div>
 				</div>
 
@@ -202,7 +201,7 @@
 				<div class="btn-holder write-review">
 					<a 
 						href="#" 
-						@click.prevent="" 
+						@click.prevent="cancelService" 
 						class="btn btn-red-b"
 						v-if="!postedRequestCompleted">
 						CANCEL SERVICE		
@@ -225,7 +224,7 @@
 			</div>
 
 			<br><br><br>
-			<div class="pagination-holder clearfix" v-if="posted_help_request_applications.items.length > 10">
+			<!-- <div class="pagination-holder clearfix" v-if="posted_help_request_applications.items.length > 10">
 				<div class="f-left">
 
 				</div>
@@ -238,7 +237,7 @@
 					<a href="#">Next</a>
 					<a href="#">Last</a>
 				</div>
-			</div>
+			</div> -->
 		</div>
 	</div>
 </template>
@@ -401,6 +400,10 @@
 			releaseFund(posted_help_request){
 				posted_help_request.payment_released = true;
 				console.log(posted_help_request)
+			},
+
+			cancelService(){
+				alert('Successfully cancelled.');
 			}
 		}
 	}

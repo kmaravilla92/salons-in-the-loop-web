@@ -339,20 +339,6 @@ footer .bottom-footer ul li:last-child{border:none;}
 .blog-detail .blog-listing .blog-holder  a{color: #434343; font-size: 16px; margin: 40px 0 20px;}
 .blog-detail .blog-listing .blog-holder  a:hover{color: #000; }
 
-
-.pagination{width: 100%; display: block; text-align: center; font-size: 0; }
-.pagination a{padding: 5px 15px; border:1px solid #d2d2d2; display: inline-block; font-size: 14px; color: #232323; background: #FFF;}
-.pagination a:hover{background: #4f81bb; color: #FFF;}
-.pagination a:first-child{border-top-left-radius: 3px; border-bottom-left-radius: 3px; border-right: none;}
-.pagination a:nth-child(2){border-right: none;}
-.pagination a:nth-child(3){border-right: none;}
-.pagination a:nth-child(4){border-right: none;}
-.pagination a:nth-child(5){border-right: none;}
-.pagination a:nth-child(6){border-right: none;}
-.pagination a:nth-child(7){border-right: none;}
-.pagination a:last-child{border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-right:1px solid #d2d2d2 !important;}
-
-
 .privacy .policy{margin: 30px 0;}
 .privacy p{font-size: 14px; color:#434343;}
 .privacy a{font-size: 14px; color:#434343;}
@@ -741,7 +727,7 @@ footer .bottom-footer ul li:last-child{border:none;}
 .pro-profile{background: #efefef;}
 .pro-profile .profilev-holder{margin-top:-200px;}
 .pro-profile .profilev-holder .prof{margin-top: -40px; padding: 0 65px 0 80px; position: relative; z-index: 2;}
-.pro-profile .profilev-holder .prof .img-holder{position: relative;display: inline-block; vertical-align: middle; border-radius: 50%; width: 150px; height: 150px; overflow: hidden; border:5px solid #FFF; }
+.pro-profile .profilev-holder .prof .img-holder{position: relative;display: inline-block; vertical-align: middle; border-radius: 50%; width: 150px; height: 150px; overflow: hidden; border:5px solid #FFF; background-color: #fff;}
 .pro-profile .profilev-holder .prof .img-over{margin-right: 20px;position: relative;display: inline-block; vertical-align: middle;  width: 150px; height: 150px; }
 .pro-profile .profilev-holder .prof .img-holder img{width: 100%;}
 .pro-profile .profilev-holder .prof .img-over .status-holder{position: absolute; top:25px; right: 6px;}
@@ -1445,4 +1431,25 @@ footer .bottom-footer ul li:last-child{border:none;}
 
 @media only screen and (max-width: 362px), only screen and (max-device-width : 362px) {
 
+}
+
+/** 
+* Kim 02/18/2018
+*/
+.client-pro-search .search-holder .v-select {
+    max-width: 330px;
+}
+
+.client-pro-search .search-holder input[type="text"] {
+    max-width: 285px;
+}
+
+.client-pro-search .advanced-holder {
+    margin-top: 15px;
+}
+
+.client-pro-search .advanced-holder input {
+    max-width: 47% !important;
+    float: left;
+    margin: 0 15px;
 }
